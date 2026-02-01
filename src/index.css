@@ -329,7 +329,5 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/30;
-} 
-lovable-badge {
-   display: none !important; 
 }
+
