@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowRight, MapPin, Check, AlertCircle, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { siteConfig, plans } from "@/lib/config";
 import heroFiberBg from "@/assets/hero-fiber.jpg";
 
@@ -69,6 +70,26 @@ export function HeroSection() {
 
   const featuredPlan = plans.find((p) => p.recommended) || plans[1];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" as const }
+    }
+  };
+
   return (
     <section
       id="inicio"
@@ -76,45 +97,82 @@ export function HeroSection() {
     >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 right-0 w-1/2 h-full opacity-20 lg:opacity-30">
+        <motion.div 
+          className="absolute top-0 right-0 w-1/2 h-full opacity-20 lg:opacity-30"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 0.3, x: 0 }}
+          transition={{ duration: 1, delay: 0.3 }}
+        >
           <img 
             src={heroFiberBg} 
             alt="" 
             className="w-full h-full object-cover object-left"
           />
-        </div>
+        </motion.div>
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/50" />
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -left-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl" />
+        <motion.div 
+          className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl"
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.1, 0.15, 0.1]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute top-1/2 -left-20 w-60 h-60 bg-primary/5 rounded-full blur-3xl"
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.05, 0.1, 0.05]
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
       </div>
 
       <div className="container relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div className="text-center lg:text-left">
+          <motion.div 
+            className="text-center lg:text-left"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {/* Promo Badge */}
             {siteConfig.promo.active && (
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6 animate-fade-in">
+              <motion.div 
+                className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6"
+                variants={itemVariants}
+              >
                 <span className="badge-primary">{siteConfig.promo.title}</span>
                 <span className="text-sm font-medium text-foreground">
                   {siteConfig.promo.discountText}
                 </span>
-              </div>
+              </motion.div>
             )}
 
             {/* Headline */}
-            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 animate-fade-in">
+            <motion.h1 
+              className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6"
+              variants={itemVariants}
+            >
               Internet fibra óptica{" "}
               <span className="text-primary">de verdade</span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0 animate-fade-in">
+            <motion.p 
+              className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0"
+              variants={itemVariants}
+            >
               Conexão ultrarrápida para sua casa em Balneário Camboriú e Camboriú. 
               Instalação em até 24h e suporte local de verdade.
-            </p>
+            </motion.p>
 
             {/* Featured Plan Highlight */}
-            <div className="card-premium p-6 mb-8 inline-block animate-fade-in">
+            <motion.div 
+              className="card-premium p-6 mb-8 inline-block"
+              variants={itemVariants}
+              whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+            >
               <div className="flex items-center gap-6">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">
@@ -136,28 +194,54 @@ export function HeroSection() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in">
-              <button onClick={scrollToPlans} className="btn-primary text-lg px-8 py-4">
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              variants={itemVariants}
+            >
+              <motion.button 
+                onClick={scrollToPlans} 
+                className="btn-primary text-lg px-8 py-4"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 Assinar agora
                 <ArrowRight className="w-5 h-5" />
-              </button>
-              <a href="#cobertura" className="btn-outline-primary text-lg px-8 py-4">
+              </motion.button>
+              <motion.a 
+                href="#cobertura" 
+                className="btn-outline-primary text-lg px-8 py-4"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
                 <MapPin className="w-5 h-5" />
                 Ver cobertura
-              </a>
-            </div>
-          </div>
+              </motion.a>
+            </motion.div>
+          </motion.div>
 
           {/* Right Content - Coverage Check */}
-          <div className="lg:pl-8">
-            <div className="card-premium p-8 animate-fade-in">
+          <motion.div 
+            className="lg:pl-8"
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <motion.div 
+              className="card-premium p-8"
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            >
               <div className="text-center mb-6">
-                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <motion.div 
+                  className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
+                >
                   <MapPin className="w-8 h-8 text-primary" />
-                </div>
+                </motion.div>
                 <h2 className="font-display text-2xl font-bold text-foreground mb-2">
                   Consulte a cobertura
                 </h2>
@@ -176,43 +260,58 @@ export function HeroSection() {
                   className="input-premium flex-1 text-center text-xl tracking-widest"
                   maxLength={9}
                 />
-                <button
+                <motion.button
                   onClick={checkCoverage}
                   disabled={cep.length < 8 || isLoading}
                   className="btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
                   {isLoading ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
                     "Verificar"
                   )}
-                </button>
+                </motion.button>
               </div>
 
               {/* Coverage Result */}
               {coverageResult && !showLeadForm && (
-                <div
+                <motion.div
                   className={`p-4 rounded-xl ${
                     coverageResult.hasCoverage
                       ? "bg-success/10 border border-success/20"
                       : "bg-warning/10 border border-warning/20"
-                  } animate-fade-in`}
+                  }`}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
                   {coverageResult.hasCoverage ? (
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
+                      <motion.div 
+                        className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0"
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.2, type: "spring" }}
+                      >
                         <Check className="w-5 h-5 text-success" />
-                      </div>
+                      </motion.div>
                       <div>
                         <p className="font-semibold text-foreground mb-1">
-                          Ótima notícia! Temos cobertura no seu endereço!
+                          Boa notícia! Temos cobertura no seu endereço 🎉
                         </p>
                         <p className="text-sm text-muted-foreground mb-3">
                           {coverageResult.neighborhood}, {coverageResult.city}
                         </p>
-                        <button onClick={scrollToPlans} className="btn-primary text-sm">
+                        <motion.button 
+                          onClick={scrollToPlans} 
+                          className="btn-primary text-sm"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
                           Ver planos disponíveis
-                        </button>
+                        </motion.button>
                       </div>
                     </div>
                   ) : (
@@ -230,12 +329,18 @@ export function HeroSection() {
                       </div>
                     </div>
                   )}
-                </div>
+                </motion.div>
               )}
 
               {/* Lead Capture Form */}
               {showLeadForm && !leadSubmitted && (
-                <form onSubmit={handleLeadSubmit} className="space-y-4 animate-fade-in">
+                <motion.form 
+                  onSubmit={handleLeadSubmit} 
+                  className="space-y-4"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="p-4 rounded-xl bg-accent/50 mb-4">
                     <p className="text-sm text-muted-foreground">
                       📍 Preencha seus dados e avisaremos quando a fibra chegar no seu endereço!
@@ -279,28 +384,43 @@ export function HeroSection() {
                       ))}
                     </select>
                   </div>
-                  <button type="submit" className="btn-primary w-full">
+                  <motion.button 
+                    type="submit" 
+                    className="btn-primary w-full"
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                  >
                     Quero ser avisado
-                  </button>
-                </form>
+                  </motion.button>
+                </motion.form>
               )}
 
               {/* Lead Success */}
               {leadSubmitted && (
-                <div className="p-6 rounded-xl bg-success/10 border border-success/20 text-center animate-fade-in">
-                  <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-4">
+                <motion.div 
+                  className="p-6 rounded-xl bg-success/10 border border-success/20 text-center"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.div 
+                    className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-4"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, type: "spring" }}
+                  >
                     <Check className="w-6 h-6 text-success" />
-                  </div>
+                  </motion.div>
                   <p className="font-semibold text-foreground mb-1">
                     Cadastro realizado com sucesso!
                   </p>
                   <p className="text-sm text-muted-foreground">
                     Entraremos em contato assim que a fibra chegar no seu bairro.
                   </p>
-                </div>
+                </motion.div>
               )}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
 
         {/* Stats */}
@@ -311,16 +431,26 @@ export function HeroSection() {
             { value: siteConfig.stats.satisfaction, label: siteConfig.stats.satisfactionText },
             { value: siteConfig.stats.uptime, label: siteConfig.stats.uptimeText },
           ].map((stat, index) => (
-            <div
+            <motion.div
               key={index}
-              className="text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-white/80 animate-fade-in"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-white/80"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
-              <div className="text-3xl lg:text-4xl font-display font-bold text-primary mb-1">
+              <motion.div 
+                className="text-3xl lg:text-4xl font-display font-bold text-primary mb-1"
+                initial={{ scale: 0.8 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 + 0.2, type: "spring" }}
+              >
                 {stat.value}
-              </div>
+              </motion.div>
               <div className="text-sm text-muted-foreground">{stat.label}</div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
