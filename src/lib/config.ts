@@ -12,37 +12,35 @@ export const siteConfig = {
   
   // Contato
   contact: {
-    phone: "(47) 3000-0000",
-    whatsapp: "5547999999999",
-    whatsappDisplay: "(47) 99999-9999",
+    phone: "(47) 92003-7544",
+    whatsapp: "5547935059508",
+    whatsappDisplay: "(47) 93505-9508",
     email: "contato@parceirosinternet.com.br",
     emailPedidos: "pedidos@parceirosinternet.com.br",
   },
   
   // Endereço
   address: {
-    street: "Av. Brasil, 1500",
-    neighborhood: "Centro",
-    city: "Balneário Camboriú",
+    street: "R. Jacarandá, 1320",
+    neighborhood: "Tabuleiro",
+    city: "Camboriú",
     state: "SC",
-    zip: "88330-000",
-    full: "Av. Brasil, 1500 - Centro, Balneário Camboriú - SC, 88330-000",
+    zip: "88340-000",
+    full: "R. Jacarandá, 1320 - Tabuleiro, Camboriú - SC",
   },
   
   // Horários de atendimento
   hours: {
     weekdays: "Segunda a Sexta: 8h às 18h",
-    saturday: "Sábado: 8h às 12h",
-    sunday: "Domingo: Fechado",
+    saturday: "",
+    sunday: "",
     support: "Suporte técnico: 24 horas",
   },
   
   // Redes sociais
   social: {
     instagram: "https://instagram.com/parceirosinternet",
-    facebook: "https://facebook.com/parceirosinternet",
-    youtube: "https://youtube.com/@parceirosinternet",
-    linkedin: "https://linkedin.com/company/parceirosinternet",
+    facebook: "https://www.facebook.com/parceirosinternet/",
   },
   
   // Estatísticas (prova social)
