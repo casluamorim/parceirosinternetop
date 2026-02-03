@@ -109,6 +109,21 @@ export function Footer() {
                 <span>{siteConfig.address.full}</span>
               </div>
             </div>
+
+            {/* Google Maps */}
+            <div className="mt-4 rounded-xl overflow-hidden border border-white/10">
+              <iframe
+                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(siteConfig.address.full)}`}
+                width="100%"
+                height="150"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Localização Parceiros Internet"
+                className="grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </div>
           </div>
 
           {/* Hours */}
