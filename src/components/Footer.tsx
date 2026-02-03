@@ -1,4 +1,4 @@
-import { Wifi, Phone, Mail, MapPin, Clock, Instagram, Facebook, Youtube, Linkedin, MessageCircle } from "lucide-react";
+import { Wifi, Phone, Mail, MapPin, Clock, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
 export function Footer() {
@@ -53,24 +53,6 @@ export function Footer() {
                 aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href={siteConfig.social.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube className="w-5 h-5" />
-              </a>
-              <a
-                href={siteConfig.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-primary flex items-center justify-center transition-colors"
-                aria-label="LinkedIn"
-              >
-                <Linkedin className="w-5 h-5" />
               </a>
             </div>
           </div>
@@ -137,8 +119,6 @@ export function Footer() {
                 <Clock className="w-4 h-4 text-primary-lighter" />
                 <span>{siteConfig.hours.weekdays}</span>
               </div>
-              <div className="pl-6">{siteConfig.hours.saturday}</div>
-              <div className="pl-6">{siteConfig.hours.sunday}</div>
               <div className="mt-2 pl-6 text-success font-medium">
                 {siteConfig.hours.support}
               </div>
