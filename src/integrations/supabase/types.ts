@@ -14,7 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      business_plans: {
+        Row: {
+          badge: string | null
+          created_at: string
+          features: string[] | null
+          id: string
+          name: string
+          price: number
+          speed: number
+          updated_at: string
+        }
+        Insert: {
+          badge?: string | null
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          name: string
+          price: number
+          speed: number
+          updated_at?: string
+        }
+        Update: {
+          badge?: string | null
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          name?: string
+          price?: number
+          speed?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      plans: {
+        Row: {
+          badge: string | null
+          created_at: string
+          features: string[] | null
+          id: string
+          name: string
+          original_price: number | null
+          popular: boolean | null
+          price: number
+          speed: number
+          updated_at: string
+        }
+        Insert: {
+          badge?: string | null
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          name: string
+          original_price?: number | null
+          popular?: boolean | null
+          price: number
+          speed: number
+          updated_at?: string
+        }
+        Update: {
+          badge?: string | null
+          created_at?: string
+          features?: string[] | null
+          id?: string
+          name?: string
+          original_price?: number | null
+          popular?: boolean | null
+          price?: number
+          speed?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          id: string
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          id?: string
+          key: string
+          updated_at?: string
+          value: Json
+        }
+        Update: {
+          id?: string
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          created_at: string
+          id: string
+          location: string
+          name: string
+          rating: number
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location: string
+          name: string
+          rating?: number
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location?: string
+          name?: string
+          rating?: number
+          text?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
