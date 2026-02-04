@@ -156,6 +156,9 @@ export function Footer() {
               <a href="#" className="hover:text-white transition-colors">
                 Termos de Uso
               </a>
+              <a href="/admin" className="hover:text-white transition-colors opacity-50 hover:opacity-100">
+                Área Restrita
+              </a>
             </div>
           </div>
         </div>
