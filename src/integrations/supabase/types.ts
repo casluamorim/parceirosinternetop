@@ -134,6 +134,30 @@ export type Database = {
         }
         Relationships: []
       }
+      trusted_companies: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          logo_url: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          logo_url: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          logo_url?: string
+          name?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

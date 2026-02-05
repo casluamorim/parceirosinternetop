@@ -1,13 +1,16 @@
-import { Link } from "react-router-dom";
-import { ArrowLeft, Settings, Package, MapPin, Users, FileText, AlertCircle } from "lucide-react";
+ import { Link } from "react-router-dom";
+ import { ArrowLeft, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { siteConfig } from "@/lib/config";
+ import { siteConfig } from "@/lib/config";
 import { useAuth } from "@/hooks/useAuth";
+ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AdminAuth } from "@/components/admin/AdminAuth";
 import { PlansTab } from "@/components/admin/PlansTab";
+ import { TestimonialsTab } from "@/components/admin/TestimonialsTab";
+ import { TrustedCompaniesTab } from "@/components/admin/TrustedCompaniesTab";
+ import { SettingsTab } from "@/components/admin/SettingsTab";
 
 export default function Admin() {
   const { user, isAdmin, loading, signOut } = useAuth();
@@ -84,8 +87,9 @@ export default function Admin() {
       {/* Main Content */}
       <main className="container py-8">
         <Tabs defaultValue="plans" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+           <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
             <TabsTrigger value="plans">Planos</TabsTrigger>
+             <TabsTrigger value="companies">Empresas</TabsTrigger>
             <TabsTrigger value="coverage">Cobertura</TabsTrigger>
             <TabsTrigger value="testimonials">Depoimentos</TabsTrigger>
             <TabsTrigger value="settings">Configurações</TabsTrigger>
@@ -95,6 +99,11 @@ export default function Admin() {
           <TabsContent value="plans">
             <PlansTab />
           </TabsContent>
+ 
+           {/* Trusted Companies Tab */}
+           <TabsContent value="companies">
+             <TrustedCompaniesTab />
+           </TabsContent>
 
           {/* Coverage Tab */}
           <TabsContent value="coverage" className="space-y-6">
@@ -122,68 +131,14 @@ export default function Admin() {
             ))}
           </TabsContent>
 
-          {/* Testimonials Tab */}
-          <TabsContent value="testimonials" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Depoimentos de Clientes</CardTitle>
-                <CardDescription>Gerencie os depoimentos exibidos no site</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Alert>
-                  <AlertDescription>
-                    A edição de depoimentos será implementada em breve.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
+           {/* Testimonials Tab */}
+           <TabsContent value="testimonials">
+             <TestimonialsTab />
           </TabsContent>
 
-          {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Informações da Empresa</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Nome da Empresa</p>
-                    <p className="font-medium">{siteConfig.company.name}</p>
-                  </div>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Telefone</p>
-                    <p className="font-medium">{siteConfig.contact.phone}</p>
-                  </div>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">WhatsApp</p>
-                    <p className="font-medium">{siteConfig.contact.whatsappDisplay}</p>
-                  </div>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium">{siteConfig.contact.email}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Promoção Ativa</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Texto do Banner</p>
-                    <p className="font-medium">{siteConfig.promo.bannerText}</p>
-                  </div>
-                  <div className="p-4 bg-muted rounded-lg">
-                    <p className="text-sm text-muted-foreground">Desconto</p>
-                    <p className="font-medium">{siteConfig.promo.discount} {siteConfig.promo.discountText}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+           {/* Settings Tab */}
+           <TabsContent value="settings">
+             <SettingsTab />
           </TabsContent>
         </Tabs>
       </main>

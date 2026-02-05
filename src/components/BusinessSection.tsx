@@ -1,7 +1,28 @@
-import { Check, MessageCircle, Building2 } from "lucide-react";
-import { businessPlans, siteConfig } from "@/lib/config";
+ import { useState, useEffect } from "react";
+ import { Check, MessageCircle, Building2 } from "lucide-react";
+ import { businessPlans, siteConfig } from "@/lib/config";
+ import { supabase } from "@/integrations/supabase/client";
+ 
+ interface TrustedCompany {
+   id: string;
+   name: string;
+   logo_url: string;
+ }
 
 export function BusinessSection() {
+   const [trustedCompanies, setTrustedCompanies] = useState<TrustedCompany[]>([]);
+ 
+   useEffect(() => {
+     const fetchCompanies = async () => {
+       const { data } = await supabase
+         .from("trusted_companies")
+         .select("id, name, logo_url")
+         .order("display_order");
+       if (data) setTrustedCompanies(data);
+     };
+     fetchCompanies();
+   }, []);
+ 
   const handleWhatsApp = (plan: typeof businessPlans[0]) => {
     const message = encodeURIComponent(
       `Olá! Tenho interesse no plano empresarial ${plan.name} de ${plan.speed} Mega. Gostaria de falar com um consultor.`
@@ -96,6 +117,29 @@ export function BusinessSection() {
             Precisa de algo customizado? Entre em contato para uma proposta sob medida.
           </p>
         </div>
+ 
+       {/* Trusted Companies */}
+       {trustedCompanies.length > 0 && (
+         <div className="mt-16 pt-12 border-t border-white/10">
+           <p className="text-center text-white/50 text-sm mb-8">
+             Empresas que confiam na nossa internet
+           </p>
+           <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
+             {trustedCompanies.map((company) => (
+               <div
+                 key={company.id}
+                 className="grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition-all duration-300"
+               >
+                 <img
+                   src={company.logo_url}
+                   alt={company.name}
+                   className="h-10 md:h-12 w-auto object-contain"
+                 />
+               </div>
+             ))}
+           </div>
+         </div>
+       )}
       </div>
     </section>
   );
