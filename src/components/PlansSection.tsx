@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { plans } from "@/lib/config";
+import { supabase } from "@/integrations/supabase/client";
 import { PlanCard } from "./PlanCard";
 import { ContractModal } from "./ContractModal";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Plan {
   id: string;
@@ -16,9 +17,59 @@ interface Plan {
   idealFor: string;
 }
 
+interface DbPlan {
+  id: string;
+  name: string;
+  speed: number;
+  price: number;
+  original_price: number | null;
+  features: string[] | null;
+  popular: boolean | null;
+  badge: string | null;
+}
+
+// Generate ideal for text based on speed
+const getIdealFor = (speed: number): string => {
+  if (speed <= 200) return "Ideal para 1-2 pessoas, navegação e redes sociais";
+  if (speed <= 400) return "Ideal para famílias com streaming e smart home";
+  if (speed <= 600) return "Ideal para gamers, home office e streaming 4K";
+  return "Ideal para empresas em casa, streamers e tech lovers";
+};
+
+// Transform DB plan to UI plan format
+const transformPlan = (dbPlan: DbPlan): Plan => ({
+  id: dbPlan.id,
+  name: dbPlan.name,
+  speed: dbPlan.speed,
+  price: dbPlan.price,
+  originalPrice: dbPlan.original_price || dbPlan.price,
+  features: dbPlan.features || [],
+  recommended: dbPlan.popular || false,
+  tag: dbPlan.badge,
+  idealFor: getIdealFor(dbPlan.speed),
+});
+
 export function PlansSection() {
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      const { data, error } = await supabase
+        .from("plans")
+        .select("*")
+        .order("speed");
+
+      if (!error && data) {
+        setPlans(data.map(transformPlan));
+      }
+      setLoading(false);
+    };
+
+    fetchPlans();
+  }, []);
 
   const handleSubscribe = (plan: Plan) => {
     setSelectedPlan(plan);
@@ -68,14 +119,40 @@ export function PlansSection() {
 
         {/* Plans Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {plans.map((plan, index) => (
-            <PlanCard 
-              key={plan.id} 
-              plan={plan} 
-              onSubscribe={handleSubscribe}
-              index={index}
-            />
-          ))}
+          {loading ? (
+            // Skeleton loading state
+            Array.from({ length: 4 }).map((_, index) => (
+              <div key={index} className="p-6 rounded-2xl border bg-card">
+                <Skeleton className="h-6 w-24 mx-auto mb-4" />
+                <Skeleton className="h-4 w-32 mx-auto mb-6" />
+                <Skeleton className="h-16 w-20 mx-auto mb-2" />
+                <Skeleton className="h-4 w-12 mx-auto mb-6" />
+                <Skeleton className="h-10 w-32 mx-auto mb-6" />
+                <div className="space-y-3">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+                <div className="mt-8 space-y-3">
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </div>
+              </div>
+            ))
+          ) : plans.length === 0 ? (
+            <div className="col-span-full text-center py-12 text-muted-foreground">
+              Nenhum plano disponível no momento.
+            </div>
+          ) : (
+            plans.map((plan, index) => (
+              <PlanCard 
+                key={plan.id} 
+                plan={plan} 
+                onSubscribe={handleSubscribe}
+                index={index}
+              />
+            ))
+          )}
         </div>
 
         {/* Additional Info */}
