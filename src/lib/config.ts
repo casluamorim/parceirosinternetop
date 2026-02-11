@@ -13,8 +13,8 @@ export const siteConfig = {
   // Contato
   contact: {
     phone: "(47) 92003-7544",
-    whatsapp: "5547935059508",
-    whatsappDisplay: "(47) 93505-9508",
+whatsapp: "5547920037544",
+whatsappDisplay: "(47) 92003-7544",
     email: "contato@parceirosinternet.com.br",
     emailPedidos: "pedidos@parceirosinternet.com.br",
   },
@@ -120,11 +120,11 @@ export const plans = [
       "Wi-Fi 5 incluso",
       "Instalação em até 24h",
       "Suporte local",
-      "Sem fidelidade",
+      "Contrato de 12 meses",
     ],
     recommended: false,
     tag: null,
-    idealFor: "Ideal para 1-2 pessoas, navegação e redes sociais",
+    idealFor: "Ideal para 1-2 pessoas, navegação e redes sociais | 12 meses de fidelidade",
   },
   {
     id: "400mega",
@@ -136,12 +136,12 @@ export const plans = [
       "Wi-Fi 5 incluso",
       "Instalação em até 24h",
       "Suporte prioritário",
-      "Sem fidelidade",
+      "Contrato de 12 meses",
       "2 pontos de TV grátis",
     ],
     recommended: true,
     tag: "Mais vendido",
-    idealFor: "Ideal para famílias com streaming e smart home",
+    idealFor: "Ideal para famílias com streaming e smart home | 12 meses de fidelidade",
   },
   {
     id: "600mega",
@@ -153,13 +153,13 @@ export const plans = [
       "Wi-Fi 6 incluso",
       "Instalação expressa",
       "Suporte VIP 24h",
-      "Sem fidelidade",
+      "Contrato de 12 meses",
       "IP fixo opcional",
       "3 pontos de TV grátis",
     ],
     recommended: false,
     tag: "Gamers",
-    idealFor: "Ideal para gamers, home office e streaming 4K",
+    idealFor: "Ideal para gamers, home office e streaming 4K | 12 meses de fidelidade",
   },
   {
     id: "1giga",
@@ -171,16 +171,17 @@ export const plans = [
       "Wi-Fi 6 premium incluso",
       "Instalação expressa",
       "Suporte VIP 24h",
-      "Sem fidelidade",
+      "Contrato de 12 meses",
       "IP fixo incluso",
       "4 pontos de TV grátis",
       "Mesh adicional grátis",
     ],
     recommended: false,
     tag: "Premium",
-    idealFor: "Ideal para empresas em casa, streamers e tech lovers",
+    idealFor: "Ideal para empresas em casa, streamers e tech lovers | 12 meses de fidelidade",
   },
 ];
+
 
 // Planos empresariais
 export const businessPlans = [
@@ -194,6 +195,7 @@ export const businessPlans = [
       "SLA 99%",
       "Suporte comercial",
       "Instalação profissional",
+      "Contrato de 12 meses",
     ],
   },
   {
@@ -207,6 +209,7 @@ export const businessPlans = [
       "Suporte prioritário 24h",
       "Backup 4G",
       "Visita técnica mensal",
+      "Contrato de 12 meses",
     ],
   },
   {
@@ -221,6 +224,7 @@ export const businessPlans = [
       "Backup redundante",
       "Firewall incluso",
       "Monitoramento 24h",
+      "Contrato de 12 meses",
     ],
   },
 ];
