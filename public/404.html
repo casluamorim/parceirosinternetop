@@ -1,15 +1,13 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <script>
-      // Redireciona qualquer rota para o index.html preservando o caminho
-      var path = location.pathname;
-      var search = location.search || "";
-      var hash = location.hash || "";
-      location.replace("/" + "?redirect=" + encodeURIComponent(path + search + hash));
-    </script>
-  </head>
-  <body></body>
+<head>
+  <meta charset="utf-8">
+  <script>
+    var path = window.location.pathname;
+    var search = window.location.search;
+    var hash = window.location.hash;
+    window.location.replace("/?redirect=" + encodeURIComponent(path + search + hash));
+  </script>
+</head>
+<body></body>
 </html>
