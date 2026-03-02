@@ -47,6 +47,107 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          display_order: number
+          id: string
+          is_default: boolean
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_default?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_default?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      plan_items: {
+        Row: {
+          active: boolean
+          badge: string | null
+          category_id: string
+          created_at: string
+          description: string | null
+          display_order: number
+          features: string[] | null
+          id: string
+          name: string
+          original_price: number | null
+          popular: boolean
+          price: number
+          slogan: string | null
+          speed: number
+          terms_url: string | null
+          updated_at: string
+          whatsapp_message: string | null
+        }
+        Insert: {
+          active?: boolean
+          badge?: string | null
+          category_id: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          features?: string[] | null
+          id?: string
+          name: string
+          original_price?: number | null
+          popular?: boolean
+          price: number
+          slogan?: string | null
+          speed: number
+          terms_url?: string | null
+          updated_at?: string
+          whatsapp_message?: string | null
+        }
+        Update: {
+          active?: boolean
+          badge?: string | null
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          features?: string[] | null
+          id?: string
+          name?: string
+          original_price?: number | null
+          popular?: boolean
+          price?: number
+          slogan?: string | null
+          speed?: number
+          terms_url?: string | null
+          updated_at?: string
+          whatsapp_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "plan_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plans: {
         Row: {
           badge: string | null
