@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowRight, MapPin, Check, AlertCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { siteConfig, plans } from "@/lib/config";
+import { siteConfig } from "@/lib/config";
+import { supabase } from "@/integrations/supabase/client";
 import heroFiberBg from "@/assets/hero-fiber.jpg";
+
+interface FeaturedPlan {
+  speed: number;
+  price: number;
+  originalPrice: number;
+}
 
 interface CoverageResult {
   hasCoverage: boolean;
@@ -22,6 +29,40 @@ export function HeroSection() {
   const [leadNeighborhood, setLeadNeighborhood] = useState("");
   const [leadCity, setLeadCity] = useState(siteConfig.coverage.cities[0]);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [featuredPlan, setFeaturedPlan] = useState<FeaturedPlan | null>(null);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const { data } = await supabase
+        .from("plans")
+        .select("speed, price, original_price, popular")
+        .eq("popular", true)
+        .limit(1)
+        .maybeSingle();
+
+      if (data) {
+        setFeaturedPlan({
+          speed: data.speed,
+          price: data.price,
+          originalPrice: data.original_price || data.price,
+        });
+      } else {
+        const { data: fallback } = await supabase
+          .from("plans")
+          .select("speed, price, original_price")
+          .order("speed")
+          .limit(2);
+        if (fallback && fallback.length > 1) {
+          setFeaturedPlan({
+            speed: fallback[1].speed,
+            price: fallback[1].price,
+            originalPrice: fallback[1].original_price || fallback[1].price,
+          });
+        }
+      }
+    };
+    fetchFeatured();
+  }, []);
 
   const checkCoverage = async () => {
     if (cep.length < 8) return;
@@ -53,7 +94,6 @@ export function HeroSection() {
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Here you would send to your backend/GESPROV
     console.log("Lead captured:", {
       name: leadName,
       whatsapp: leadWhatsapp,
@@ -67,8 +107,6 @@ export function HeroSection() {
   const scrollToPlans = () => {
     document.getElementById("planos")?.scrollIntoView({ behavior: "smooth" });
   };
-
-  const featuredPlan = plans.find((p) => p.recommended) || plans[1];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -168,6 +206,7 @@ export function HeroSection() {
             </motion.p>
 
             {/* Featured Plan Highlight */}
+            {featuredPlan && (
             <motion.div 
               className="card-premium p-6 mb-8 inline-block"
               variants={itemVariants}
@@ -195,6 +234,7 @@ export function HeroSection() {
                 </div>
               </div>
             </motion.div>
+            )}
 
             {/* CTA Buttons */}
             <motion.div 
