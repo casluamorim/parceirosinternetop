@@ -33,9 +33,29 @@ export function HeroSection() {
 
   useEffect(() => {
     const fetchFeatured = async () => {
+      // Try new plan_items table first (popular item from default category)
+      const { data: newItem } = await supabase
+        .from("plan_items")
+        .select("speed, price, original_price")
+        .eq("popular", true)
+        .eq("active", true)
+        .order("display_order")
+        .limit(1)
+        .maybeSingle();
+
+      if (newItem) {
+        setFeaturedPlan({
+          speed: newItem.speed,
+          price: Number(newItem.price),
+          originalPrice: Number(newItem.original_price || newItem.price),
+        });
+        return;
+      }
+
+      // Fallback to legacy plans table
       const { data } = await supabase
         .from("plans")
-        .select("speed, price, original_price, popular")
+        .select("speed, price, original_price")
         .eq("popular", true)
         .limit(1)
         .maybeSingle();
@@ -43,22 +63,9 @@ export function HeroSection() {
       if (data) {
         setFeaturedPlan({
           speed: data.speed,
-          price: data.price,
-          originalPrice: data.original_price || data.price,
+          price: Number(data.price),
+          originalPrice: Number(data.original_price || data.price),
         });
-      } else {
-        const { data: fallback } = await supabase
-          .from("plans")
-          .select("speed, price, original_price")
-          .order("speed")
-          .limit(2);
-        if (fallback && fallback.length > 1) {
-          setFeaturedPlan({
-            speed: fallback[1].speed,
-            price: fallback[1].price,
-            originalPrice: fallback[1].original_price || fallback[1].price,
-          });
-        }
       }
     };
     fetchFeatured();
