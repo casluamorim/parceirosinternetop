@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { PlanItemCard } from "./PlanItemCard";
 import { ContractModal } from "./ContractModal";
@@ -40,36 +41,48 @@ export function PlansSection() {
   const [selectedPlan, setSelectedPlan] = useState<PlanItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const [catRes, itemRes] = await Promise.all([
-        supabase
-          .from("plan_categories")
-          .select("*")
-          .eq("active", true)
-          .order("display_order"),
-        supabase
-          .from("plan_items")
-          .select("*")
-          .eq("active", true)
-          .order("display_order"),
-      ]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
-      if (catRes.data) {
-        setCategories(catRes.data);
-        const defaultCat = catRes.data.find((c) => c.is_default) || catRes.data[0];
-        if (defaultCat) setActiveCategory(defaultCat.id);
-      }
-      if (itemRes.data) {
-        setItems(itemRes.data);
-      }
-      setLoading(false);
-    };
-    fetchData();
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
   }, []);
 
   const filteredItems = items.filter((i) => i.category_id === activeCategory);
   const activeCategoryData = categories.find((c) => c.id === activeCategory);
+
+  useEffect(() => {
+    // Reset scroll position when category changes
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = 0;
+    }
+    // Small delay to let DOM update before checking scroll
+    const t = setTimeout(checkScroll, 100);
+    return () => clearTimeout(t);
+  }, [activeCategory, filteredItems.length, checkScroll]);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      el.addEventListener("scroll", checkScroll, { passive: true });
+      window.addEventListener("resize", checkScroll);
+      return () => {
+        el.removeEventListener("scroll", checkScroll);
+        window.removeEventListener("resize", checkScroll);
+      };
+    }
+  }, [checkScroll]);
+
+  const scroll = (dir: "left" | "right") => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = 340;
+    el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+  };
 
   const handleSubscribe = (plan: PlanItem) => {
     setSelectedPlan(plan);
@@ -150,53 +163,91 @@ export function PlansSection() {
           </motion.div>
         )}
 
-        {/* Plans Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              {loading ? (
-                Array.from({ length: 3 }).map((_, index) => (
-                  <div key={index} className="p-6 rounded-2xl border bg-card">
-                    <Skeleton className="h-6 w-24 mx-auto mb-4" />
-                    <Skeleton className="h-4 w-32 mx-auto mb-6" />
-                    <Skeleton className="h-16 w-20 mx-auto mb-2" />
-                    <Skeleton className="h-4 w-12 mx-auto mb-6" />
-                    <Skeleton className="h-10 w-32 mx-auto mb-6" />
-                    <div className="space-y-3">
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-3/4" />
+        {/* Plans Horizontal Carousel */}
+        <div className="relative">
+          {/* Left Arrow */}
+          {canScrollLeft && (
+            <button
+              onClick={() => scroll("left")}
+              className="absolute -left-4 lg:-left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+              aria-label="Rolar para esquerda"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* Right Arrow */}
+          {canScrollRight && (
+            <button
+              onClick={() => scroll("right")}
+              className="absolute -right-4 lg:-right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
+              aria-label="Rolar para direita"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* Left fade */}
+          {canScrollLeft && (
+            <div className="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+          )}
+          {/* Right fade */}
+          {canScrollRight && (
+            <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+          )}
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeCategory}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div
+                ref={scrollRef}
+                className="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide snap-x snap-mandatory"
+                style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem" }}
+              >
+                {loading ? (
+                  Array.from({ length: 4 }).map((_, index) => (
+                    <div key={index} className="min-w-[300px] max-w-[340px] flex-shrink-0 p-6 rounded-2xl border bg-card snap-start">
+                      <Skeleton className="h-6 w-24 mx-auto mb-4" />
+                      <Skeleton className="h-4 w-32 mx-auto mb-6" />
+                      <Skeleton className="h-16 w-20 mx-auto mb-2" />
+                      <Skeleton className="h-4 w-12 mx-auto mb-6" />
+                      <Skeleton className="h-10 w-32 mx-auto mb-6" />
+                      <div className="space-y-3">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-3/4" />
+                      </div>
+                      <div className="mt-8 space-y-3">
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-12 w-full" />
+                      </div>
                     </div>
-                    <div className="mt-8 space-y-3">
-                      <Skeleton className="h-12 w-full" />
-                      <Skeleton className="h-12 w-full" />
-                    </div>
+                  ))
+                ) : filteredItems.length === 0 ? (
+                  <div className="w-full text-center py-12 text-muted-foreground">
+                    Nenhum plano disponível nesta categoria.
                   </div>
-                ))
-              ) : filteredItems.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-muted-foreground">
-                  Nenhum plano disponível nesta categoria.
-                </div>
-              ) : (
-                filteredItems.map((item, index) => (
-                  <PlanItemCard
-                    key={item.id}
-                    item={item}
-                    categoryName={activeCategoryData?.name || ""}
-                    onSubscribe={handleSubscribe}
-                    index={index}
-                  />
-                ))
-              )}
-            </div>
-          </motion.div>
-        </AnimatePresence>
+                ) : (
+                  filteredItems.map((item, index) => (
+                    <div key={item.id} className="min-w-[300px] max-w-[340px] flex-shrink-0 snap-start">
+                      <PlanItemCard
+                        item={item}
+                        categoryName={activeCategoryData?.name || ""}
+                        onSubscribe={handleSubscribe}
+                        index={index}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         {/* Additional Info */}
         <motion.div
