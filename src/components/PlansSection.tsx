@@ -52,6 +52,34 @@ export function PlansSection() {
     setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const [catRes, itemRes] = await Promise.all([
+        supabase
+          .from("plan_categories")
+          .select("*")
+          .eq("active", true)
+          .order("display_order"),
+        supabase
+          .from("plan_items")
+          .select("*")
+          .eq("active", true)
+          .order("display_order"),
+      ]);
+
+      if (catRes.data) {
+        setCategories(catRes.data);
+        const defaultCat = catRes.data.find((c) => c.is_default) || catRes.data[0];
+        if (defaultCat) setActiveCategory(defaultCat.id);
+      }
+      if (itemRes.data) {
+        setItems(itemRes.data);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
   const filteredItems = items.filter((i) => i.category_id === activeCategory);
   const activeCategoryData = categories.find((c) => c.id === activeCategory);
 
