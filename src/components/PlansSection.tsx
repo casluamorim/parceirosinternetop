@@ -44,6 +44,10 @@ export function PlansSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const isDragging = useRef(false);
+  const startX = useRef(0);
+  const scrollLeftStart = useRef(0);
+  const hasDragged = useRef(false);
 
   const checkScroll = useCallback(() => {
     const el = scrollRef.current;
@@ -104,6 +108,37 @@ export function PlansSection() {
       };
     }
   }, [checkScroll]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    isDragging.current = true;
+    hasDragged.current = false;
+    startX.current = e.pageX - el.offsetLeft;
+    scrollLeftStart.current = el.scrollLeft;
+    el.style.cursor = "grabbing";
+    el.style.userSelect = "none";
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    e.preventDefault();
+    const x = e.pageX - el.offsetLeft;
+    const walk = x - startX.current;
+    if (Math.abs(walk) > 5) hasDragged.current = true;
+    el.scrollLeft = scrollLeftStart.current - walk;
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
+    const el = scrollRef.current;
+    if (el) {
+      el.style.cursor = "grab";
+      el.style.userSelect = "";
+    }
+  };
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
@@ -234,8 +269,12 @@ export function PlansSection() {
             >
               <div
                 ref={scrollRef}
-                className="flex gap-4 lg:gap-6 overflow-x-auto scroll-smooth pb-4 px-1 scrollbar-hide snap-x snap-mandatory"
+                className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 px-1 scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none"
                 style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem" }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
               >
                 {loading ? (
                   Array.from({ length: 4 }).map((_, index) => (
