@@ -108,7 +108,7 @@ export function PlansSection() {
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
-    const cardWidth = 340;
+    const cardWidth = 304;
     el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
   };
 
@@ -234,12 +234,12 @@ export function PlansSection() {
             >
               <div
                 ref={scrollRef}
-                className="flex gap-6 overflow-x-auto scroll-smooth pb-4 scrollbar-hide snap-x snap-mandatory"
-                style={{ scrollPaddingLeft: "1rem", scrollPaddingRight: "1rem" }}
+                className="flex gap-4 lg:gap-6 overflow-x-auto scroll-smooth pb-4 px-1 scrollbar-hide snap-x snap-mandatory"
+                style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem" }}
               >
                 {loading ? (
                   Array.from({ length: 4 }).map((_, index) => (
-                    <div key={index} className="min-w-[300px] max-w-[340px] flex-shrink-0 p-6 rounded-2xl border bg-card snap-start">
+                    <div key={index} className="min-w-[280px] w-[280px] lg:min-w-[300px] lg:w-[300px] flex-shrink-0 p-6 rounded-2xl border bg-card snap-start">
                       <Skeleton className="h-6 w-24 mx-auto mb-4" />
                       <Skeleton className="h-4 w-32 mx-auto mb-6" />
                       <Skeleton className="h-16 w-20 mx-auto mb-2" />
@@ -262,7 +262,7 @@ export function PlansSection() {
                   </div>
                 ) : (
                   filteredItems.map((item, index) => (
-                    <div key={item.id} className="min-w-[300px] max-w-[340px] flex-shrink-0 snap-start">
+                    <div key={item.id} className="min-w-[280px] w-[280px] lg:min-w-[300px] lg:w-[300px] flex-shrink-0 snap-start">
                       <PlanItemCard
                         item={item}
                         categoryName={activeCategoryData?.name || ""}
