@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, MessageCircle, Wifi } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   { href: "#inicio", label: "Início" },
@@ -14,12 +15,31 @@ const navLinks = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [promoActive, setPromoActive] = useState(siteConfig.promo.active);
+  const [promoBannerText, setPromoBannerText] = useState(siteConfig.promo.bannerText);
+  const [promoBannerCta, setPromoBannerCta] = useState(siteConfig.promo.bannerCta);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
+
+    // Fetch promo from DB
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "hero_promo")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) {
+          const val = data.value as Record<string, unknown>;
+          if (typeof val.active === "boolean") setPromoActive(val.active);
+          if (typeof val.bannerText === "string") setPromoBannerText(val.bannerText);
+          if (typeof val.bannerCta === "string") setPromoBannerCta(val.bannerCta);
+        }
+      });
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -40,15 +60,15 @@ export function Header() {
   return (
     <>
       {/* Promo Banner */}
-      {siteConfig.promo.active && (
+      {promoActive && (
         <div className="promo-banner fixed top-0 left-0 right-0 z-50 text-center text-sm font-medium">
           <div className="container flex items-center justify-center gap-4">
-            <span>{siteConfig.promo.bannerText}</span>
+            <span>{promoBannerText}</span>
             <button
               onClick={scrollToPlans}
               className="hidden sm:inline-flex items-center gap-1 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs font-semibold transition-colors"
             >
-              {siteConfig.promo.bannerCta}
+              {promoBannerCta}
             </button>
           </div>
         </div>
@@ -57,7 +77,7 @@ export function Header() {
       {/* Main Header */}
       <header
         className={`fixed left-0 right-0 z-40 transition-all duration-300 ${
-          siteConfig.promo.active ? "top-10" : "top-0"
+          promoActive ? "top-10" : "top-0"
         } ${
           isScrolled
             ? "bg-white/95 backdrop-blur-md shadow-lg"
