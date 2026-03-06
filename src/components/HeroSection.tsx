@@ -17,6 +17,14 @@ interface CoverageResult {
   city?: string;
 }
 
+interface PromoSettings {
+  active: boolean;
+  title: string;
+  discountText: string;
+  bannerText: string;
+  bannerCta: string;
+}
+
 export function HeroSection() {
   const [cep, setCep] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +38,35 @@ export function HeroSection() {
   const [leadCity, setLeadCity] = useState(siteConfig.coverage.cities[0]);
   const [leadSubmitted, setLeadSubmitted] = useState(false);
   const [featuredPlan, setFeaturedPlan] = useState<FeaturedPlan | null>(null);
+  const [promo, setPromo] = useState<PromoSettings>({
+    active: siteConfig.promo.active,
+    title: siteConfig.promo.title,
+    discountText: siteConfig.promo.discountText,
+    bannerText: siteConfig.promo.bannerText,
+    bannerCta: siteConfig.promo.bannerCta,
+  });
 
   useEffect(() => {
-    const fetchFeatured = async () => {
-      // Try new plan_items table first (popular item from default category)
+    const fetchData = async () => {
+      // Fetch promo settings
+      const { data: promoData } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "hero_promo")
+        .maybeSingle();
+
+      if (promoData?.value) {
+        const val = promoData.value as Record<string, unknown>;
+        setPromo({
+          active: val.active as boolean ?? siteConfig.promo.active,
+          title: val.title as string ?? siteConfig.promo.title,
+          discountText: val.discountText as string ?? siteConfig.promo.discountText,
+          bannerText: val.bannerText as string ?? siteConfig.promo.bannerText,
+          bannerCta: val.bannerCta as string ?? siteConfig.promo.bannerCta,
+        });
+      }
+
+      // Fetch featured plan
       const { data: newItem } = await supabase
         .from("plan_items")
         .select("speed, price, original_price")
@@ -68,7 +101,7 @@ export function HeroSection() {
         });
       }
     };
-    fetchFeatured();
+    fetchData();
   }, []);
 
   const checkCoverage = async () => {
