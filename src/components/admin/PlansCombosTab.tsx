@@ -65,6 +65,22 @@ interface BusinessPlan {
   badge: string | null;
 }
 
+interface PromoSettings {
+  active: boolean;
+  title: string;
+  discountText: string;
+  bannerText: string;
+  bannerCta: string;
+}
+
+const defaultPromo: PromoSettings = {
+  active: true,
+  title: "MEGA PROMOÇÃO",
+  discountText: "com 50% de desconto",
+  bannerText: "🔥 Promoção de Verão!",
+  bannerCta: "Contratar agora",
+};
+
 export function PlansCombosTab() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<PlanItemData[]>([]);
@@ -73,15 +89,18 @@ export function PlansCombosTab() {
   const [loading, setLoading] = useState(true);
   const [showCategorySettings, setShowCategorySettings] = useState(false);
   const [editingCatNames, setEditingCatNames] = useState<Record<string, string>>({});
+  const [promo, setPromo] = useState<PromoSettings>(defaultPromo);
+  const [savingPromo, setSavingPromo] = useState(false);
   const { toast } = useToast();
 
   const fetchData = async () => {
     setLoading(true);
-    const [catRes, itemRes, plansRes, bpRes] = await Promise.all([
+    const [catRes, itemRes, plansRes, bpRes, promoRes] = await Promise.all([
       supabase.from("plan_categories").select("*").order("display_order"),
       supabase.from("plan_items").select("*").order("display_order"),
       supabase.from("plans").select("*").order("speed"),
       supabase.from("business_plans").select("*").order("speed"),
+      supabase.from("site_settings").select("value").eq("key", "hero_promo").maybeSingle(),
     ]);
     if (catRes.data) {
       setCategories(catRes.data);
@@ -92,10 +111,21 @@ export function PlansCombosTab() {
     if (itemRes.data) setItems(itemRes.data);
     if (plansRes.data) setPlans(plansRes.data || []);
     if (bpRes.data) setBusinessPlans(bpRes.data || []);
+    if (promoRes.data?.value) setPromo({ ...defaultPromo, ...(promoRes.data.value as Record<string, unknown>) } as PromoSettings);
     setLoading(false);
   };
 
   useEffect(() => { fetchData(); }, []);
+
+  const savePromo = async () => {
+    setSavingPromo(true);
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert({ key: "hero_promo", value: promo as unknown as Record<string, unknown> }, { onConflict: "key" });
+    setSavingPromo(false);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else toast({ title: "Sucesso", description: "Promoção atualizada!" });
+  };
 
   const toggleCategoryActive = async (id: string, active: boolean) => {
     const { error } = await supabase.from("plan_categories").update({ active }).eq("id", id);
@@ -150,6 +180,40 @@ export function PlansCombosTab() {
 
   return (
     <div className="space-y-6">
+      {/* Hero Promo Editor */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Promoção do Hero</CardTitle>
+          <CardDescription>Configure a promoção que aparece na primeira seção do site</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-3">
+            <Switch checked={promo.active} onCheckedChange={(v) => setPromo((p) => ({ ...p, active: v }))} />
+            <Label>Promoção ativa</Label>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Título da tag (ex: MEGA PROMOÇÃO)</Label>
+              <Input value={promo.title} onChange={(e) => setPromo((p) => ({ ...p, title: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Texto do desconto (ex: com 50% de desconto)</Label>
+              <Input value={promo.discountText} onChange={(e) => setPromo((p) => ({ ...p, discountText: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Texto do banner topo</Label>
+              <Input value={promo.bannerText} onChange={(e) => setPromo((p) => ({ ...p, bannerText: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Texto do botão do banner</Label>
+              <Input value={promo.bannerCta} onChange={(e) => setPromo((p) => ({ ...p, bannerCta: e.target.value }))} />
+            </div>
+          </div>
+          <Button onClick={savePromo} disabled={savingPromo}>
+            {savingPromo ? "Salvando..." : "Salvar promoção"}
+          </Button>
+        </CardContent>
+      </Card>
       {/* Category Management */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
