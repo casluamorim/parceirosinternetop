@@ -68,6 +68,8 @@ interface BusinessPlan {
 export function PlansCombosTab() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<PlanItemData[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [businessPlans, setBusinessPlans] = useState<BusinessPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCategorySettings, setShowCategorySettings] = useState(false);
   const [editingCatNames, setEditingCatNames] = useState<Record<string, string>>({});
