@@ -275,6 +275,114 @@ export function PlansCombosTab() {
           )}
         </CardContent>
       </Card>
+
+      {/* Legacy Residential Plans */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Planos Residenciais (Legado)</CardTitle>
+            <CardDescription>Planos residenciais do sistema anterior</CardDescription>
+          </div>
+          <PlanEditDialog isNew onSave={fetchData} />
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+          ) : plans.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">Nenhum plano cadastrado</div>
+          ) : (
+            <div className="space-y-3">
+              {plans.map((plan) => (
+                <div key={plan.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-semibold">{plan.name}</h4>
+                      {plan.badge && <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{plan.badge}</span>}
+                      {plan.popular && <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-full">Popular</span>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{plan.speed} Mega • {plan.features.length} recursos</p>
+                  </div>
+                  <div className="text-right mr-4">
+                    <p className="font-bold text-lg">R$ {Number(plan.price).toFixed(2)}</p>
+                    {plan.original_price && <p className="text-sm text-muted-foreground line-through">R$ {Number(plan.original_price).toFixed(2)}</p>}
+                  </div>
+                  <div className="flex gap-2">
+                    <PlanEditDialog plan={plan} onSave={fetchData} />
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
+                          <AlertDialogDescription>O plano "{plan.name}" será removido permanentemente.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deletePlan(plan.id)}>Excluir</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Legacy Business Plans */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Planos Empresariais (Legado)</CardTitle>
+            <CardDescription>Planos empresariais do sistema anterior</CardDescription>
+          </div>
+          <BusinessPlanEditDialog isNew onSave={fetchData} />
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+          ) : businessPlans.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">Nenhum plano cadastrado</div>
+          ) : (
+            <div className="space-y-3">
+              {businessPlans.map((plan) => (
+                <div key={plan.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-semibold">{plan.name}</h4>
+                      {plan.badge && <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{plan.badge}</span>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{plan.speed} Mega • {plan.features.length} recursos</p>
+                  </div>
+                  <div className="text-right mr-4">
+                    <p className="font-bold text-lg">R$ {Number(plan.price).toFixed(2)}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <BusinessPlanEditDialog plan={plan} onSave={fetchData} />
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
+                          <AlertDialogDescription>O plano "{plan.name}" será removido permanentemente.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteBusinessPlan(plan.id)}>Excluir</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
