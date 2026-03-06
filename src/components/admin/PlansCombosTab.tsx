@@ -134,6 +134,18 @@ export function PlansCombosTab() {
     }
   };
 
+  const deletePlan = async (id: string) => {
+    const { error } = await supabase.from("plans").delete().eq("id", id);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else { toast({ title: "Sucesso", description: "Plano excluído!" }); fetchData(); }
+  };
+
+  const deleteBusinessPlan = async (id: string) => {
+    const { error } = await supabase.from("business_plans").delete().eq("id", id);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else { toast({ title: "Sucesso", description: "Plano empresarial excluído!" }); fetchData(); }
+  };
+
   const getCategoryName = (id: string) => categories.find((c) => c.id === id)?.name || "—";
 
   return (
