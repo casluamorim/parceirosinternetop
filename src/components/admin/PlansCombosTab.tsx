@@ -121,7 +121,8 @@ export function PlansCombosTab() {
     setSavingPromo(true);
     const { error } = await supabase
       .from("site_settings")
-      .upsert({ key: "hero_promo", value: promo as unknown as Record<string, unknown> }, { onConflict: "key" });
+      .update({ value: promo as unknown as Record<string, unknown> })
+      .eq("key", "hero_promo");
     setSavingPromo(false);
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
     else toast({ title: "Sucesso", description: "Promoção atualizada!" });
