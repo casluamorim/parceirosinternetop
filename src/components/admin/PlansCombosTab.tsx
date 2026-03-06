@@ -121,7 +121,7 @@ export function PlansCombosTab() {
     setSavingPromo(true);
     const { error } = await supabase
       .from("site_settings")
-      .update({ value: promo as unknown as Record<string, unknown> })
+      .update({ value: JSON.parse(JSON.stringify(promo)) })
       .eq("key", "hero_promo");
     setSavingPromo(false);
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
