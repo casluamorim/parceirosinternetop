@@ -77,9 +77,11 @@ export function PlansCombosTab() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [catRes, itemRes] = await Promise.all([
+    const [catRes, itemRes, plansRes, bpRes] = await Promise.all([
       supabase.from("plan_categories").select("*").order("display_order"),
       supabase.from("plan_items").select("*").order("display_order"),
+      supabase.from("plans").select("*").order("speed"),
+      supabase.from("business_plans").select("*").order("speed"),
     ]);
     if (catRes.data) {
       setCategories(catRes.data);
@@ -88,6 +90,8 @@ export function PlansCombosTab() {
       setEditingCatNames(names);
     }
     if (itemRes.data) setItems(itemRes.data);
+    if (plansRes.data) setPlans(plansRes.data || []);
+    if (bpRes.data) setBusinessPlans(bpRes.data || []);
     setLoading(false);
   };
 
