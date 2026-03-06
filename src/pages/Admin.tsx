@@ -7,7 +7,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/useAuth";
  import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AdminAuth } from "@/components/admin/AdminAuth";
-import { PlansTab } from "@/components/admin/PlansTab";
 import { PlansCombosTab } from "@/components/admin/PlansCombosTab";
  import { TestimonialsTab } from "@/components/admin/TestimonialsTab";
  import { TrustedCompaniesTab } from "@/components/admin/TrustedCompaniesTab";
@@ -88,9 +87,8 @@ export default function Admin() {
       {/* Main Content */}
       <main className="container py-8">
         <Tabs defaultValue="plans-combos" className="space-y-6">
-           <TabsList className="grid w-full grid-cols-6 lg:w-auto lg:inline-grid">
+           <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
             <TabsTrigger value="plans-combos">Planos e Combos</TabsTrigger>
-            <TabsTrigger value="plans">Planos Legado</TabsTrigger>
              <TabsTrigger value="companies">Empresas</TabsTrigger>
             <TabsTrigger value="coverage">Cobertura</TabsTrigger>
             <TabsTrigger value="testimonials">Depoimentos</TabsTrigger>
@@ -100,11 +98,6 @@ export default function Admin() {
           {/* Plans & Combos Tab */}
           <TabsContent value="plans-combos">
             <PlansCombosTab />
-          </TabsContent>
-
-          {/* Legacy Plans Tab */}
-          <TabsContent value="plans">
-            <PlansTab />
           </TabsContent>
  
            {/* Trusted Companies Tab */}
