@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { PlanItemEditDialog } from "./PlanItemEditDialog";
+import { PlanEditDialog } from "./PlanEditDialog";
+import { BusinessPlanEditDialog } from "./BusinessPlanEditDialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -43,9 +45,31 @@ interface PlanItemData {
   active: boolean;
 }
 
+interface Plan {
+  id: string;
+  name: string;
+  speed: number;
+  price: number;
+  original_price: number | null;
+  features: string[];
+  popular: boolean;
+  badge: string | null;
+}
+
+interface BusinessPlan {
+  id: string;
+  name: string;
+  speed: number;
+  price: number;
+  features: string[];
+  badge: string | null;
+}
+
 export function PlansCombosTab() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<PlanItemData[]>([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [businessPlans, setBusinessPlans] = useState<BusinessPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCategorySettings, setShowCategorySettings] = useState(false);
   const [editingCatNames, setEditingCatNames] = useState<Record<string, string>>({});
@@ -53,9 +77,11 @@ export function PlansCombosTab() {
 
   const fetchData = async () => {
     setLoading(true);
-    const [catRes, itemRes] = await Promise.all([
+    const [catRes, itemRes, plansRes, bpRes] = await Promise.all([
       supabase.from("plan_categories").select("*").order("display_order"),
       supabase.from("plan_items").select("*").order("display_order"),
+      supabase.from("plans").select("*").order("speed"),
+      supabase.from("business_plans").select("*").order("speed"),
     ]);
     if (catRes.data) {
       setCategories(catRes.data);
@@ -64,6 +90,8 @@ export function PlansCombosTab() {
       setEditingCatNames(names);
     }
     if (itemRes.data) setItems(itemRes.data);
+    if (plansRes.data) setPlans(plansRes.data || []);
+    if (bpRes.data) setBusinessPlans(bpRes.data || []);
     setLoading(false);
   };
 
@@ -104,6 +132,18 @@ export function PlansCombosTab() {
       toast({ title: "Sucesso", description: "Item excluído!" });
       fetchData();
     }
+  };
+
+  const deletePlan = async (id: string) => {
+    const { error } = await supabase.from("plans").delete().eq("id", id);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else { toast({ title: "Sucesso", description: "Plano excluído!" }); fetchData(); }
+  };
+
+  const deleteBusinessPlan = async (id: string) => {
+    const { error } = await supabase.from("business_plans").delete().eq("id", id);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else { toast({ title: "Sucesso", description: "Plano empresarial excluído!" }); fetchData(); }
   };
 
   const getCategoryName = (id: string) => categories.find((c) => c.id === id)?.name || "—";
@@ -231,6 +271,114 @@ export function PlansCombosTab() {
               {items.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">Nenhum item cadastrado</div>
               )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Legacy Residential Plans */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Planos Residenciais (Legado)</CardTitle>
+            <CardDescription>Planos residenciais do sistema anterior</CardDescription>
+          </div>
+          <PlanEditDialog isNew onSave={fetchData} />
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+          ) : plans.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">Nenhum plano cadastrado</div>
+          ) : (
+            <div className="space-y-3">
+              {plans.map((plan) => (
+                <div key={plan.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-semibold">{plan.name}</h4>
+                      {plan.badge && <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{plan.badge}</span>}
+                      {plan.popular && <span className="text-xs bg-accent text-accent-foreground px-2 py-1 rounded-full">Popular</span>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{plan.speed} Mega • {plan.features.length} recursos</p>
+                  </div>
+                  <div className="text-right mr-4">
+                    <p className="font-bold text-lg">R$ {Number(plan.price).toFixed(2)}</p>
+                    {plan.original_price && <p className="text-sm text-muted-foreground line-through">R$ {Number(plan.original_price).toFixed(2)}</p>}
+                  </div>
+                  <div className="flex gap-2">
+                    <PlanEditDialog plan={plan} onSave={fetchData} />
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
+                          <AlertDialogDescription>O plano "{plan.name}" será removido permanentemente.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deletePlan(plan.id)}>Excluir</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Legacy Business Plans */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle>Planos Empresariais (Legado)</CardTitle>
+            <CardDescription>Planos empresariais do sistema anterior</CardDescription>
+          </div>
+          <BusinessPlanEditDialog isNew onSave={fetchData} />
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+          ) : businessPlans.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">Nenhum plano cadastrado</div>
+          ) : (
+            <div className="space-y-3">
+              {businessPlans.map((plan) => (
+                <div key={plan.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h4 className="font-semibold">{plan.name}</h4>
+                      {plan.badge && <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{plan.badge}</span>}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{plan.speed} Mega • {plan.features.length} recursos</p>
+                  </div>
+                  <div className="text-right mr-4">
+                    <p className="font-bold text-lg">R$ {Number(plan.price).toFixed(2)}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <BusinessPlanEditDialog plan={plan} onSave={fetchData} />
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-destructive"><Trash2 className="w-4 h-4" /></Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir plano?</AlertDialogTitle>
+                          <AlertDialogDescription>O plano "{plan.name}" será removido permanentemente.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteBusinessPlan(plan.id)}>Excluir</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
