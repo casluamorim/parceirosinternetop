@@ -60,15 +60,15 @@ export function Header() {
   return (
     <>
       {/* Promo Banner */}
-      {siteConfig.promo.active && (
+      {promoActive && (
         <div className="promo-banner fixed top-0 left-0 right-0 z-50 text-center text-sm font-medium">
           <div className="container flex items-center justify-center gap-4">
-            <span>{siteConfig.promo.bannerText}</span>
+            <span>{promoBannerText}</span>
             <button
               onClick={scrollToPlans}
               className="hidden sm:inline-flex items-center gap-1 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs font-semibold transition-colors"
             >
-              {siteConfig.promo.bannerCta}
+              {promoBannerCta}
             </button>
           </div>
         </div>
@@ -77,7 +77,7 @@ export function Header() {
       {/* Main Header */}
       <header
         className={`fixed left-0 right-0 z-40 transition-all duration-300 ${
-          siteConfig.promo.active ? "top-10" : "top-0"
+          promoActive ? "top-10" : "top-0"
         } ${
           isScrolled
             ? "bg-white/95 backdrop-blur-md shadow-lg"
