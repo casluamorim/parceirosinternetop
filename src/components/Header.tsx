@@ -15,12 +15,31 @@ const navLinks = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [promoActive, setPromoActive] = useState(siteConfig.promo.active);
+  const [promoBannerText, setPromoBannerText] = useState(siteConfig.promo.bannerText);
+  const [promoBannerCta, setPromoBannerCta] = useState(siteConfig.promo.bannerCta);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
     window.addEventListener("scroll", handleScroll);
+
+    // Fetch promo from DB
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "hero_promo")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.value) {
+          const val = data.value as Record<string, unknown>;
+          if (typeof val.active === "boolean") setPromoActive(val.active);
+          if (typeof val.bannerText === "string") setPromoBannerText(val.bannerText);
+          if (typeof val.bannerCta === "string") setPromoBannerCta(val.bannerCta);
+        }
+      });
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
