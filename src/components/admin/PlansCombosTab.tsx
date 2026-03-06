@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { PlanItemEditDialog } from "./PlanItemEditDialog";
+import { PlanEditDialog } from "./PlanEditDialog";
+import { BusinessPlanEditDialog } from "./BusinessPlanEditDialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
@@ -41,6 +43,26 @@ interface PlanItemData {
   whatsapp_message: string | null;
   terms_url: string | null;
   active: boolean;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  speed: number;
+  price: number;
+  original_price: number | null;
+  features: string[];
+  popular: boolean;
+  badge: string | null;
+}
+
+interface BusinessPlan {
+  id: string;
+  name: string;
+  speed: number;
+  price: number;
+  features: string[];
+  badge: string | null;
 }
 
 export function PlansCombosTab() {
