@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X, MessageCircle, Wifi } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const navLinks = [
   { href: "#inicio", label: "Início" },
