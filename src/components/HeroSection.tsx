@@ -216,14 +216,14 @@ export function HeroSection() {
             animate="visible"
           >
             {/* Promo Badge */}
-            {siteConfig.promo.active && (
+            {promo.active && (
               <motion.div 
                 className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6"
                 variants={itemVariants}
               >
-                <span className="badge-primary">{siteConfig.promo.title}</span>
+                <span className="badge-primary">{promo.title}</span>
                 <span className="text-sm font-medium text-foreground">
-                  {siteConfig.promo.discountText}
+                  {promo.discountText}
                 </span>
               </motion.div>
             )}
