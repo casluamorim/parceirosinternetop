@@ -214,7 +214,19 @@ export function PlansCombosTab() {
               <Input value={promo.bannerCta} onChange={(e) => setPromo((p) => ({ ...p, bannerCta: e.target.value }))} />
             </div>
           </div>
-          <Button onClick={savePromo} disabled={savingPromo}>
+          <div className="border-t pt-4 mt-4">
+            <h4 className="font-semibold mb-3">Destaque do Plano no Hero</h4>
+            <div className="flex items-center gap-3 mb-4">
+              <Switch checked={promo.showFeatured} onCheckedChange={(v) => setPromo((p) => ({ ...p, showFeatured: v }))} />
+              <Label>Mostrar plano em destaque</Label>
+            </div>
+            <div className="space-y-2">
+              <Label>Texto do destaque (ex: Plano mais vendido)</Label>
+              <Input value={promo.featuredLabel} onChange={(e) => setPromo((p) => ({ ...p, featuredLabel: e.target.value }))} />
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">O plano exibido é o marcado como "popular" nos itens acima.</p>
+          </div>
+          <Button onClick={savePromo} disabled={savingPromo} className="mt-4">
             {savingPromo ? "Salvando..." : "Salvar promoção"}
           </Button>
         </CardContent>

@@ -261,7 +261,7 @@ export function HeroSection() {
               <div className="flex items-center gap-6">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">
-                    Plano mais vendido
+                    {promo.featuredLabel}
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="speed-display text-5xl">{featuredPlan.speed}</span>
