@@ -46,6 +46,8 @@ export function HeroSection() {
     discountText: siteConfig.promo.discountText,
     bannerText: siteConfig.promo.bannerText,
     bannerCta: siteConfig.promo.bannerCta,
+    showFeatured: true,
+    featuredLabel: "Plano mais vendido",
   });
 
   useEffect(() => {
