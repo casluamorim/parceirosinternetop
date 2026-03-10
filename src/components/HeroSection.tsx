@@ -67,6 +67,8 @@ export function HeroSection() {
           discountText: val.discountText as string ?? siteConfig.promo.discountText,
           bannerText: val.bannerText as string ?? siteConfig.promo.bannerText,
           bannerCta: val.bannerCta as string ?? siteConfig.promo.bannerCta,
+          showFeatured: val.showFeatured !== false,
+          featuredLabel: (val.featuredLabel as string) || "Plano mais vendido",
         });
       }
 
