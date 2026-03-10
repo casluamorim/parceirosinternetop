@@ -71,6 +71,7 @@ export function HeroSection() {
           bannerCta: val.bannerCta as string ?? siteConfig.promo.bannerCta,
           showFeatured: val.showFeatured !== false,
           featuredLabel: (val.featuredLabel as string) || "Plano mais vendido",
+          featuredPlanId: (val.featuredPlanId as string) || null,
         });
       }
 
