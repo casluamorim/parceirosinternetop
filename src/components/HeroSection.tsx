@@ -49,6 +49,7 @@ export function HeroSection() {
     bannerCta: siteConfig.promo.bannerCta,
     showFeatured: true,
     featuredLabel: "Plano mais vendido",
+    featuredPlanId: null,
   });
 
   useEffect(() => {
