@@ -23,6 +23,8 @@ interface PromoSettings {
   discountText: string;
   bannerText: string;
   bannerCta: string;
+  showFeatured: boolean;
+  featuredLabel: string;
 }
 
 export function HeroSection() {
@@ -44,6 +46,8 @@ export function HeroSection() {
     discountText: siteConfig.promo.discountText,
     bannerText: siteConfig.promo.bannerText,
     bannerCta: siteConfig.promo.bannerCta,
+    showFeatured: true,
+    featuredLabel: "Plano mais vendido",
   });
 
   useEffect(() => {
@@ -63,6 +67,8 @@ export function HeroSection() {
           discountText: val.discountText as string ?? siteConfig.promo.discountText,
           bannerText: val.bannerText as string ?? siteConfig.promo.bannerText,
           bannerCta: val.bannerCta as string ?? siteConfig.promo.bannerCta,
+          showFeatured: val.showFeatured !== false,
+          featuredLabel: (val.featuredLabel as string) || "Plano mais vendido",
         });
       }
 
@@ -246,7 +252,7 @@ export function HeroSection() {
             </motion.p>
 
             {/* Featured Plan Highlight */}
-            {featuredPlan && (
+            {featuredPlan && promo.showFeatured && (
             <motion.div 
               className="card-premium p-6 mb-8 inline-block"
               variants={itemVariants}
@@ -255,7 +261,7 @@ export function HeroSection() {
               <div className="flex items-center gap-6">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">
-                    Plano mais vendido
+                    {promo.featuredLabel}
                   </div>
                   <div className="flex items-baseline gap-2">
                     <span className="speed-display text-5xl">{featuredPlan.speed}</span>
