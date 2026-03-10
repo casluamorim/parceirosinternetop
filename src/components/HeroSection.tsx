@@ -23,6 +23,8 @@ interface PromoSettings {
   discountText: string;
   bannerText: string;
   bannerCta: string;
+  showFeatured: boolean;
+  featuredLabel: string;
 }
 
 export function HeroSection() {
