@@ -76,6 +76,7 @@ interface PromoSettings {
   bannerCta: string;
   showFeatured: boolean;
   featuredLabel: string;
+  featuredPlanId: string | null;
 }
 
 const defaultPromo: PromoSettings = {
@@ -86,6 +87,7 @@ const defaultPromo: PromoSettings = {
   bannerCta: "Contratar agora",
   showFeatured: true,
   featuredLabel: "Plano mais vendido",
+  featuredPlanId: null,
 };
 
 export function PlansCombosTab() {
