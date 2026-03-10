@@ -71,6 +71,8 @@ interface PromoSettings {
   discountText: string;
   bannerText: string;
   bannerCta: string;
+  showFeatured: boolean;
+  featuredLabel: string;
 }
 
 const defaultPromo: PromoSettings = {
@@ -79,6 +81,8 @@ const defaultPromo: PromoSettings = {
   discountText: "com 50% de desconto",
   bannerText: "🔥 Promoção de Verão!",
   bannerCta: "Contratar agora",
+  showFeatured: true,
+  featuredLabel: "Plano mais vendido",
 };
 
 export function PlansCombosTab() {
