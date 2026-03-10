@@ -11,6 +11,9 @@ import { PlanItemEditDialog } from "./PlanItemEditDialog";
 import { PlanEditDialog } from "./PlanEditDialog";
 import { BusinessPlanEditDialog } from "./BusinessPlanEditDialog";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
@@ -73,6 +76,7 @@ interface PromoSettings {
   bannerCta: string;
   showFeatured: boolean;
   featuredLabel: string;
+  featuredPlanId: string | null;
 }
 
 const defaultPromo: PromoSettings = {
@@ -83,6 +87,7 @@ const defaultPromo: PromoSettings = {
   bannerCta: "Contratar agora",
   showFeatured: true,
   featuredLabel: "Plano mais vendido",
+  featuredPlanId: null,
 };
 
 export function PlansCombosTab() {
@@ -220,11 +225,34 @@ export function PlansCombosTab() {
               <Switch checked={promo.showFeatured} onCheckedChange={(v) => setPromo((p) => ({ ...p, showFeatured: v }))} />
               <Label>Mostrar plano em destaque</Label>
             </div>
-            <div className="space-y-2">
-              <Label>Texto do destaque (ex: Plano mais vendido)</Label>
-              <Input value={promo.featuredLabel} onChange={(e) => setPromo((p) => ({ ...p, featuredLabel: e.target.value }))} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Plano exibido no Hero</Label>
+                <Select
+                  value={promo.featuredPlanId || "auto"}
+                  onValueChange={(v) => setPromo((p) => ({ ...p, featuredPlanId: v === "auto" ? null : v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione um plano" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="auto">Automático (primeiro popular)</SelectItem>
+                    {items.map((item) => {
+                      const catName = getCategoryName(item.category_id);
+                      return (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name} — {item.speed} Mega — R$ {Number(item.price).toFixed(2)} ({catName})
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Texto do destaque (ex: Plano mais vendido)</Label>
+                <Input value={promo.featuredLabel} onChange={(e) => setPromo((p) => ({ ...p, featuredLabel: e.target.value }))} />
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">O plano exibido é o marcado como "popular" nos itens acima.</p>
           </div>
           <Button onClick={savePromo} disabled={savingPromo} className="mt-4">
             {savingPromo ? "Salvando..." : "Salvar promoção"}
