@@ -252,7 +252,7 @@ export function HeroSection() {
             </motion.p>
 
             {/* Featured Plan Highlight */}
-            {featuredPlan && (
+            {featuredPlan && promo.showFeatured && (
             <motion.div 
               className="card-premium p-6 mb-8 inline-block"
               variants={itemVariants}
