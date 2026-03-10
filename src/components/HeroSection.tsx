@@ -25,6 +25,7 @@ interface PromoSettings {
   bannerCta: string;
   showFeatured: boolean;
   featuredLabel: string;
+  featuredPlanId: string | null;
 }
 
 export function HeroSection() {
