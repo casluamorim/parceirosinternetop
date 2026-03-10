@@ -76,6 +76,29 @@ export function HeroSection() {
       }
 
       // Fetch featured plan
+      const promoVal = promoData?.value as Record<string, unknown> | null;
+      const featuredId = promoVal?.featuredPlanId as string | null;
+
+      if (featuredId) {
+        // Fetch specific plan by ID
+        const { data: specificItem } = await supabase
+          .from("plan_items")
+          .select("speed, price, original_price")
+          .eq("id", featuredId)
+          .eq("active", true)
+          .maybeSingle();
+
+        if (specificItem) {
+          setFeaturedPlan({
+            speed: specificItem.speed,
+            price: Number(specificItem.price),
+            originalPrice: Number(specificItem.original_price || specificItem.price),
+          });
+          return;
+        }
+      }
+
+      // Fallback: first popular plan_item
       const { data: newItem } = await supabase
         .from("plan_items")
         .select("speed, price, original_price")
@@ -90,23 +113,6 @@ export function HeroSection() {
           speed: newItem.speed,
           price: Number(newItem.price),
           originalPrice: Number(newItem.original_price || newItem.price),
-        });
-        return;
-      }
-
-      // Fallback to legacy plans table
-      const { data } = await supabase
-        .from("plans")
-        .select("speed, price, original_price")
-        .eq("popular", true)
-        .limit(1)
-        .maybeSingle();
-
-      if (data) {
-        setFeaturedPlan({
-          speed: data.speed,
-          price: Number(data.price),
-          originalPrice: Number(data.original_price || data.price),
         });
       }
     };
