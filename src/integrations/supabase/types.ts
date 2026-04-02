@@ -47,6 +47,200 @@ export type Database = {
         }
         Relationships: []
       }
+      cancelamentos: {
+        Row: {
+          ano: number
+          cliente_id: string | null
+          created_at: string
+          id: string
+          mes: number
+          motivo: string | null
+          vendedor_id: string
+        }
+        Insert: {
+          ano: number
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          mes: number
+          motivo?: string | null
+          vendedor_id: string
+        }
+        Update: {
+          ano?: number
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          mes?: number
+          motivo?: string | null
+          vendedor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cancelamentos_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cancelamentos_vendedor_id_fkey"
+            columns: ["vendedor_id"]
+            isOneToOne: false
+            referencedRelation: "sales_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clientes: {
+        Row: {
+          ano: number
+          created_at: string
+          data_adesao: string
+          email: string | null
+          endereco: string | null
+          id: string
+          mes: number
+          nome: string
+          plano_id: string | null
+          status: string
+          telefone: string | null
+          updated_at: string
+          vendedor_id: string | null
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          data_adesao?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          mes: number
+          nome: string
+          plano_id?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
+          vendedor_id?: string | null
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          data_adesao?: string
+          email?: string | null
+          endereco?: string | null
+          id?: string
+          mes?: number
+          nome?: string
+          plano_id?: string | null
+          status?: string
+          telefone?: string | null
+          updated_at?: string
+          vendedor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clientes_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "plan_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clientes_vendedor_id_fkey"
+            columns: ["vendedor_id"]
+            isOneToOne: false
+            referencedRelation: "sales_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investimento_mensal: {
+        Row: {
+          ano: number
+          created_at: string
+          id: string
+          mes: number
+          valor: number
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          id?: string
+          mes: number
+          valor?: number
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          id?: string
+          mes?: number
+          valor?: number
+        }
+        Relationships: []
+      }
+      meta_vendedor: {
+        Row: {
+          ano: number
+          created_at: string
+          id: string
+          mes: number
+          meta: number
+          vendedor_id: string
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          id?: string
+          mes: number
+          meta: number
+          vendedor_id: string
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          id?: string
+          mes?: number
+          meta?: number
+          vendedor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meta_vendedor_vendedor_id_fkey"
+            columns: ["vendedor_id"]
+            isOneToOne: false
+            referencedRelation: "sales_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      metas: {
+        Row: {
+          ano: number
+          bonus: number
+          created_at: string
+          id: string
+          mes: number
+          min_vendas: number
+        }
+        Insert: {
+          ano: number
+          bonus: number
+          created_at?: string
+          id?: string
+          mes: number
+          min_vendas: number
+        }
+        Update: {
+          ano?: number
+          bonus?: number
+          created_at?: string
+          id?: string
+          mes?: number
+          min_vendas?: number
+        }
+        Relationships: []
+      }
       plan_categories: {
         Row: {
           active: boolean
@@ -79,6 +273,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      plan_commissions: {
+        Row: {
+          active: boolean
+          bonus_extra: number | null
+          comissao: number
+          created_at: string
+          id: string
+          plan_item_id: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          bonus_extra?: number | null
+          comissao?: number
+          created_at?: string
+          id?: string
+          plan_item_id: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          bonus_extra?: number | null
+          comissao?: number
+          created_at?: string
+          id?: string
+          plan_item_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_commissions_plan_item_id_fkey"
+            columns: ["plan_item_id"]
+            isOneToOne: true
+            referencedRelation: "plan_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       plan_items: {
         Row: {
@@ -187,6 +419,87 @@ export type Database = {
         }
         Relationships: []
       }
+      recorrencia: {
+        Row: {
+          ano: number
+          created_at: string
+          id: string
+          mes: number
+          valor: number
+        }
+        Insert: {
+          ano: number
+          created_at?: string
+          id?: string
+          mes: number
+          valor?: number
+        }
+        Update: {
+          ano?: number
+          created_at?: string
+          id?: string
+          mes?: number
+          valor?: number
+        }
+        Relationships: []
+      }
+      sales_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      sales_users: {
+        Row: {
+          active: boolean
+          created_at: string
+          email: string
+          id: string
+          name: string
+          role: Database["public"]["Enums"]["sales_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          role?: Database["public"]["Enums"]["sales_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          role?: Database["public"]["Enums"]["sales_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           id: string
@@ -277,11 +590,67 @@ export type Database = {
         }
         Relationships: []
       }
+      vendas: {
+        Row: {
+          ano: number
+          cliente_id: string | null
+          created_at: string
+          id: string
+          mes: number
+          plano_id: string
+          quantidade: number
+          vendedor_id: string
+        }
+        Insert: {
+          ano: number
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          mes: number
+          plano_id: string
+          quantidade?: number
+          vendedor_id: string
+        }
+        Update: {
+          ano?: number
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          mes?: number
+          plano_id?: string
+          quantidade?: number
+          vendedor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendas_plano_id_fkey"
+            columns: ["plano_id"]
+            isOneToOne: false
+            referencedRelation: "plan_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendas_vendedor_id_fkey"
+            columns: ["vendedor_id"]
+            isOneToOne: false
+            referencedRelation: "sales_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      get_sales_user_id: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -289,9 +658,18 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_sales_access: { Args: { _user_id: string }; Returns: boolean }
+      has_sales_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["sales_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "user"
+      sales_role: "vendedor" | "financeiro" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -420,6 +798,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      sales_role: ["vendedor", "financeiro", "admin"],
     },
   },
 } as const
