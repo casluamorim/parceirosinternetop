@@ -6,6 +6,15 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import SalesLayout from "./pages/sales/SalesLayout";
+import SalesDashboard from "./pages/sales/SalesDashboard";
+import VendasPage from "./pages/sales/VendasPage";
+import ClientesPage from "./pages/sales/ClientesPage";
+import CancelamentosPage from "./pages/sales/CancelamentosPage";
+import MetasPage from "./pages/sales/MetasPage";
+import RankingPage from "./pages/sales/RankingPage";
+import UsuariosPage from "./pages/sales/UsuariosPage";
+import ConfigPage from "./pages/sales/ConfigPage";
 
 const queryClient = new QueryClient();
 
