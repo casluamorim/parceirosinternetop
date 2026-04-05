@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
-import { MESES } from "@/lib/sales-utils";
+import { MESES, formatCurrency, calcularMulta, calcularMesesAtivo, FIDELIDADE_MESES } from "@/lib/sales-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, AlertTriangle } from "lucide-react";
 
 const sq = (table: string) => (supabase.from as any)(table);
 
@@ -23,15 +24,27 @@ export default function CancelamentosPage() {
   const [vendedores, setVendedores] = useState<any[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ cliente_id: "", vendedor_id: "", motivo: "" });
+  const [multaPreview, setMultaPreview] = useState<{ mesesAtivo: number; multa: number; antecipado: boolean } | null>(null);
 
   useEffect(() => { loadData(); }, [mes, ano, salesUser]);
 
   const loadData = async () => {
     if (!salesUser) return;
     const { data } = await sq("cancelamentos").select("*").eq("mes", mes).eq("ano", ano).order("created_at", { ascending: false });
-    setCancelamentos(data || []);
 
-    const { data: clients } = await sq("clientes").select("id, nome").eq("status", "ativo");
+    // Enrich with client names
+    const enriched = await Promise.all(
+      (data || []).map(async (c: any) => {
+        if (c.cliente_id) {
+          const { data: cliente } = await sq("clientes").select("nome, plano_id").eq("id", c.cliente_id).maybeSingle();
+          return { ...c, cliente_nome: cliente?.nome || "—" };
+        }
+        return { ...c, cliente_nome: "—" };
+      })
+    );
+    setCancelamentos(enriched);
+
+    const { data: clients } = await sq("clientes").select("id, nome, data_adesao, plano_id").eq("status", "ativo");
     setClientes(clients || []);
 
     if (canManage) {
@@ -40,14 +53,70 @@ export default function CancelamentosPage() {
     }
   };
 
+  // When client changes, calculate penalty preview
+  useEffect(() => {
+    if (!form.cliente_id) { setMultaPreview(null); return; }
+    calcPreview();
+  }, [form.cliente_id]);
+
+  const calcPreview = async () => {
+    const cliente = clientes.find(c => c.id === form.cliente_id);
+    if (!cliente) { setMultaPreview(null); return; }
+
+    const mesesAtivo = calcularMesesAtivo(cliente.data_adesao);
+    let planoPreco = 0;
+    if (cliente.plano_id) {
+      const { data: plan } = await supabase.from("plan_items").select("price").eq("id", cliente.plano_id).maybeSingle();
+      planoPreco = plan ? Number(plan.price) : 0;
+    }
+    const multa = calcularMulta(planoPreco, mesesAtivo);
+    const antecipado = mesesAtivo < FIDELIDADE_MESES;
+    setMultaPreview({ mesesAtivo, multa, antecipado });
+  };
+
   const handleSubmit = async () => {
     const vid = canManage ? form.vendedor_id : salesUser!.id;
     if (!vid) { toast({ title: "Selecione o vendedor", variant: "destructive" }); return; }
-    const { error } = await sq("cancelamentos").insert({ cliente_id: form.cliente_id || null, vendedor_id: vid, motivo: form.motivo, mes, ano });
+
+    let mesesAtivo = 0;
+    let cancelamentoAntecipado = false;
+    let valorMulta = 0;
+
+    if (form.cliente_id) {
+      const cliente = clientes.find(c => c.id === form.cliente_id);
+      if (cliente) {
+        mesesAtivo = calcularMesesAtivo(cliente.data_adesao);
+        cancelamentoAntecipado = mesesAtivo < FIDELIDADE_MESES;
+        if (cancelamentoAntecipado && cliente.plano_id) {
+          const { data: plan } = await supabase.from("plan_items").select("price").eq("id", cliente.plano_id).maybeSingle();
+          valorMulta = calcularMulta(plan ? Number(plan.price) : 0, mesesAtivo);
+        }
+      }
+    }
+
+    const { error } = await sq("cancelamentos").insert({
+      cliente_id: form.cliente_id || null,
+      vendedor_id: vid,
+      motivo: form.motivo,
+      mes,
+      ano,
+      data_cancelamento: new Date().toISOString().split("T")[0],
+      meses_ativo: mesesAtivo,
+      cancelamento_antecipado: cancelamentoAntecipado,
+      valor_multa: valorMulta,
+    });
+
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+
+    // Update client status
+    if (form.cliente_id) {
+      await sq("clientes").update({ status: "cancelado" }).eq("id", form.cliente_id);
+    }
+
     toast({ title: "Cancelamento registrado!" });
     setDialogOpen(false);
     setForm({ cliente_id: "", vendedor_id: "", motivo: "" });
+    setMultaPreview(null);
     loadData();
   };
 
@@ -90,6 +159,24 @@ export default function CancelamentosPage() {
                   <SelectTrigger><SelectValue placeholder="Cliente (opcional)" /></SelectTrigger>
                   <SelectContent>{clientes.map((c) => <SelectItem key={c.id} value={c.id}>{c.nome}</SelectItem>)}</SelectContent>
                 </Select>
+
+                {multaPreview && (
+                  <Card className={multaPreview.antecipado ? "border-destructive" : "border-green-500"}>
+                    <CardContent className="p-3 text-sm space-y-1">
+                      <div className="flex items-center gap-2">
+                        {multaPreview.antecipado && <AlertTriangle className="w-4 h-4 text-destructive" />}
+                        <span className="font-medium">
+                          {multaPreview.antecipado ? "Cancelamento Antecipado" : "Fidelidade cumprida"}
+                        </span>
+                      </div>
+                      <p>Meses ativo: {multaPreview.mesesAtivo} / {FIDELIDADE_MESES}</p>
+                      {multaPreview.antecipado && (
+                        <p className="font-semibold text-destructive">Multa: {formatCurrency(multaPreview.multa)}</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
                 <Input placeholder="Motivo" value={form.motivo} onChange={(e) => setForm({ ...form, motivo: e.target.value })} />
                 <Button onClick={handleSubmit} className="w-full">Registrar</Button>
               </div>
@@ -107,7 +194,11 @@ export default function CancelamentosPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Cliente</TableHead>
                   <TableHead>Motivo</TableHead>
+                  <TableHead>Meses Ativo</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  {canManage && <TableHead>Multa</TableHead>}
                   <TableHead>Data</TableHead>
                   {canManage && <TableHead className="w-12"></TableHead>}
                 </TableRow>
@@ -115,8 +206,18 @@ export default function CancelamentosPage() {
               <TableBody>
                 {cancelamentos.map((c) => (
                   <TableRow key={c.id}>
-                    <TableCell>{c.motivo || "Sem motivo informado"}</TableCell>
-                    <TableCell>{new Date(c.created_at).toLocaleDateString("pt-BR")}</TableCell>
+                    <TableCell>{c.cliente_nome}</TableCell>
+                    <TableCell>{c.motivo || "—"}</TableCell>
+                    <TableCell>{c.meses_ativo || 0}</TableCell>
+                    <TableCell>
+                      {c.cancelamento_antecipado ? (
+                        <Badge variant="destructive">Antecipado</Badge>
+                      ) : (
+                        <Badge variant="secondary">Normal</Badge>
+                      )}
+                    </TableCell>
+                    {canManage && <TableCell>{c.valor_multa ? formatCurrency(Number(c.valor_multa)) : "—"}</TableCell>}
+                    <TableCell>{c.data_cancelamento ? new Date(c.data_cancelamento).toLocaleDateString("pt-BR") : new Date(c.created_at).toLocaleDateString("pt-BR")}</TableCell>
                     {canManage && (
                       <TableCell>
                         <Button variant="ghost" size="icon" onClick={() => handleDelete(c.id)}>

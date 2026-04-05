@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
-import { MESES, formatCurrency } from "@/lib/sales-utils";
+import { MESES, formatCurrency, FAIXAS_COMISSAO } from "@/lib/sales-utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,41 +26,23 @@ export default function ConfigPage() {
   const [investimentoValor, setInvestimentoValor] = useState("");
   const [investimentoId, setInvestimentoId] = useState<string | null>(null);
 
-  // Commissions
-  const [planItems, setPlanItems] = useState<any[]>([]);
-  const [commissions, setCommissions] = useState<Record<string, { comissao: string; bonus_extra: string; id?: string }>>({});
-
   useEffect(() => { loadData(); }, [mes, ano, salesUser]);
 
   const loadData = async () => {
     if (!salesUser) return;
 
-    // Recorrencia
     const { data: rec } = await sq("recorrencia").select("*").eq("mes", mes).eq("ano", ano).maybeSingle();
     if (rec) { setRecorrenciaValor(String(rec.valor)); setRecorrenciaId(rec.id); }
     else { setRecorrenciaValor(""); setRecorrenciaId(null); }
 
-    // Investimento
     const { data: inv } = await sq("investimento_mensal").select("*").eq("mes", mes).eq("ano", ano).maybeSingle();
     if (inv) { setInvestimentoValor(String(inv.valor)); setInvestimentoId(inv.id); }
     else { setInvestimentoValor(""); setInvestimentoId(null); }
-
-    // Plans + commissions
-    const { data: plans } = await supabase.from("plan_items").select("id, name, speed, price").eq("active", true).order("speed");
-    setPlanItems(plans || []);
-
-    const { data: comms } = await sq("plan_commissions").select("*");
-    const commMap: Record<string, any> = {};
-    (comms || []).forEach((c: any) => {
-      commMap[c.plan_item_id] = { comissao: String(c.comissao), bonus_extra: String(c.bonus_extra || 0), id: c.id };
-    });
-    setCommissions(commMap);
   };
 
   const saveRecorrencia = async () => {
     const val = parseFloat(recorrenciaValor);
     if (isNaN(val) || val < 0) { toast({ title: "Valor inválido", variant: "destructive" }); return; }
-
     if (recorrenciaId) {
       await sq("recorrencia").update({ valor: val }).eq("id", recorrenciaId);
     } else {
@@ -73,7 +55,6 @@ export default function ConfigPage() {
   const saveInvestimento = async () => {
     const val = parseFloat(investimentoValor);
     if (isNaN(val) || val < 0) { toast({ title: "Valor inválido", variant: "destructive" }); return; }
-
     if (investimentoId) {
       await sq("investimento_mensal").update({ valor: val }).eq("id", investimentoId);
     } else {
@@ -81,30 +62,6 @@ export default function ConfigPage() {
     }
     toast({ title: "Investimento salvo!" });
     loadData();
-  };
-
-  const saveCommission = async (planId: string) => {
-    const c = commissions[planId];
-    if (!c) return;
-    const comissao = parseFloat(c.comissao);
-    const bonus = parseFloat(c.bonus_extra) || 0;
-
-    if (isNaN(comissao) || comissao < 0) { toast({ title: "Comissão inválida", variant: "destructive" }); return; }
-
-    if (c.id) {
-      await sq("plan_commissions").update({ comissao, bonus_extra: bonus }).eq("id", c.id);
-    } else {
-      await sq("plan_commissions").insert({ plan_item_id: planId, comissao, bonus_extra: bonus });
-    }
-    toast({ title: "Comissão salva!" });
-    loadData();
-  };
-
-  const updateCommField = (planId: string, field: string, value: string) => {
-    setCommissions((prev) => ({
-      ...prev,
-      [planId]: { ...prev[planId] || { comissao: "0", bonus_extra: "0" }, [field]: value },
-    }));
   };
 
   return (
@@ -126,8 +83,33 @@ export default function ConfigPage() {
         </div>
       </div>
 
+      {/* Faixas de Comissão */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Faixas de Comissão</CardTitle>
+          <CardDescription>Comissão calculada como porcentagem sobre o faturamento total do vendedor no mês</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Vendas</TableHead>
+                <TableHead>Percentual</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {FAIXAS_COMISSAO.map((f) => (
+                <TableRow key={f.min}>
+                  <TableCell>{f.min} a {f.max} vendas</TableCell>
+                  <TableCell className="font-semibold">{(f.percentual * 100).toFixed(0)}%</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Recorrência */}
         <Card>
           <CardHeader>
             <CardTitle>Recorrência</CardTitle>
@@ -139,7 +121,6 @@ export default function ConfigPage() {
           </CardContent>
         </Card>
 
-        {/* Investimento */}
         <Card>
           <CardHeader>
             <CardTitle>Investimento Mensal</CardTitle>
@@ -152,57 +133,17 @@ export default function ConfigPage() {
         </Card>
       </div>
 
-      {/* Comissões por plano */}
+      {/* Fidelidade Info */}
       <Card>
         <CardHeader>
-          <CardTitle>Comissões por Plano</CardTitle>
-          <CardDescription>Defina a comissão e bônus extra para cada plano</CardDescription>
+          <CardTitle>Fidelidade & Multa</CardTitle>
+          <CardDescription>Regras aplicadas automaticamente nos cancelamentos</CardDescription>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Plano</TableHead>
-                <TableHead>Velocidade</TableHead>
-                <TableHead>Preço</TableHead>
-                <TableHead>Comissão (R$)</TableHead>
-                <TableHead>Bônus Extra (R$)</TableHead>
-                <TableHead className="w-20"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {planItems.map((p) => (
-                <TableRow key={p.id}>
-                  <TableCell className="font-medium">{p.name}</TableCell>
-                  <TableCell>{p.speed}MB</TableCell>
-                  <TableCell>{formatCurrency(Number(p.price))}</TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      className="w-24"
-                      value={commissions[p.id]?.comissao || ""}
-                      onChange={(e) => updateCommField(p.id, "comissao", e.target.value)}
-                      placeholder="0"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Input
-                      type="number"
-                      className="w-24"
-                      value={commissions[p.id]?.bonus_extra || ""}
-                      onChange={(e) => updateCommField(p.id, "bonus_extra", e.target.value)}
-                      placeholder="0"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Button size="sm" variant="outline" onClick={() => saveCommission(p.id)}>
-                      <Save className="w-3 h-3" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+        <CardContent className="text-sm space-y-2">
+          <p>• Fidelidade mínima: <strong>12 meses</strong></p>
+          <p>• Cancelamento antes de 12 meses = <strong>cancelamento antecipado</strong></p>
+          <p>• Multa: <strong>10%</strong> sobre o valor restante do contrato até completar 12 meses</p>
+          <p className="text-muted-foreground">Fórmula: (meses restantes × preço do plano) × 10%</p>
         </CardContent>
       </Card>
     </div>

@@ -12,6 +12,8 @@ const sq = (table: string) => (supabase.from as any)(table);
 interface RankEntry {
   name: string;
   totalVendas: number;
+  faturamento: number;
+  porcentagem: number;
   comissao: number;
   cancelamentos: number;
   score: number;
@@ -34,9 +36,8 @@ export default function RankingPage() {
 
     const { data: allVendas } = await sq("vendas").select("*").eq("mes", mes).eq("ano", ano);
     const { data: allCancels } = await sq("cancelamentos").select("vendedor_id").eq("mes", mes).eq("ano", ano);
-    const { data: commissions } = await sq("plan_commissions").select("plan_item_id, comissao, bonus_extra").eq("active", true);
-
-    const planos = (commissions || []).map((c: any) => ({ id: c.plan_item_id, comissao: Number(c.comissao), bonus_extra: c.bonus_extra ? Number(c.bonus_extra) : 0 }));
+    const { data: planItems } = await supabase.from("plan_items").select("id, price").eq("active", true);
+    const planos = (planItems || []).map((p: any) => ({ id: p.id, preco: Number(p.price) }));
 
     const entries: RankEntry[] = sellers.map((s: any) => {
       const sVendas = (allVendas || []).filter((v: any) => v.vendedor_id === s.id);
@@ -45,7 +46,7 @@ export default function RankingPage() {
         sVendas.map((v: any) => ({ plano_id: v.plano_id, quantidade: v.quantidade })),
         planos, [], null, null, sCancels
       );
-      return { name: s.name, totalVendas: result.totalVendas, comissao: result.comissao, cancelamentos: sCancels, score: result.score };
+      return { name: s.name, totalVendas: result.totalVendas, faturamento: result.faturamento, porcentagem: result.porcentagem, comissao: result.comissao, cancelamentos: sCancels, score: result.score };
     });
 
     entries.sort((a, b) => b.totalVendas - a.totalVendas);
@@ -89,6 +90,8 @@ export default function RankingPage() {
                   <TableHead className="w-16">#</TableHead>
                   <TableHead>Vendedor</TableHead>
                   <TableHead>Vendas</TableHead>
+                  <TableHead>Faturamento</TableHead>
+                  <TableHead>Faixa</TableHead>
                   <TableHead>Comissão</TableHead>
                   <TableHead>Cancelamentos</TableHead>
                   <TableHead>Score</TableHead>
@@ -100,6 +103,8 @@ export default function RankingPage() {
                     <TableCell className="text-lg">{medals[i] || i + 1}</TableCell>
                     <TableCell className="font-medium">{r.name}</TableCell>
                     <TableCell>{r.totalVendas}</TableCell>
+                    <TableCell>{formatCurrency(r.faturamento)}</TableCell>
+                    <TableCell>{(r.porcentagem * 100).toFixed(0)}%</TableCell>
                     <TableCell>{formatCurrency(r.comissao)}</TableCell>
                     <TableCell>{r.cancelamentos}</TableCell>
                     <TableCell className={r.score >= 0 ? "text-green-600 font-semibold" : "text-red-600 font-semibold"}>{r.score}</TableCell>
