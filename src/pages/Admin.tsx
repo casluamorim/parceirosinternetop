@@ -1,5 +1,5 @@
- import { Link } from "react-router-dom";
- import { ArrowLeft, AlertCircle } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, AlertCircle, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -75,12 +75,18 @@ export default function Admin() {
             <div className="h-6 w-px bg-border" />
             <h1 className="font-display font-bold text-lg">Painel Administrativo</h1>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">{user.email}</span>
-            <Button variant="outline" size="sm" onClick={() => signOut()}>
-              Sair
-            </Button>
-          </div>
+            <div className="flex items-center gap-3">
+              <Link to="/sales">
+                <Button variant="outline" size="sm">
+                  <BarChart3 className="w-4 h-4 mr-2" />
+                  Módulo de Vendas
+                </Button>
+              </Link>
+              <span className="text-sm text-muted-foreground">{user.email}</span>
+              <Button variant="outline" size="sm" onClick={() => signOut()}>
+                Sair
+              </Button>
+            </div>
         </div>
       </header>
 
