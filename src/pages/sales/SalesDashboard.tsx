@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
-import { calcularGanho, formatCurrency, SALARIO_BASE, MESES } from "@/lib/sales-utils";
+import { calcularGanho, formatCurrency, SALARIO_BASE, MESES, getPercentualComissao } from "@/lib/sales-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { TrendingUp, DollarSign, Target, Award, Users, AlertTriangle } from "lucide-react";
+import { TrendingUp, DollarSign, Target, Award, AlertTriangle, Percent } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const sq = (table: string) => (supabase.from as any)(table);
@@ -42,8 +42,9 @@ export default function SalesDashboard() {
     if (targetVendedorId) vendasQuery = vendasQuery.eq("vendedor_id", targetVendedorId);
     const { data: vendas } = await vendasQuery;
 
-    const { data: commissions } = await sq("plan_commissions").select("plan_item_id, comissao, bonus_extra").eq("active", true);
-    const planos = (commissions || []).map((c: any) => ({ id: c.plan_item_id, comissao: Number(c.comissao), bonus_extra: c.bonus_extra ? Number(c.bonus_extra) : 0 }));
+    // Get plan prices from plan_items
+    const { data: planItems } = await supabase.from("plan_items").select("id, price").eq("active", true);
+    const planos = (planItems || []).map((p: any) => ({ id: p.id, preco: Number(p.price) }));
 
     const { data: metas } = await sq("metas").select("*").eq("mes", mes).eq("ano", ano);
 
@@ -91,6 +92,8 @@ export default function SalesDashboard() {
 
   const stats = [
     { label: "Total Vendas", value: metrics?.totalVendas || 0, icon: ShoppingCartIcon, color: "text-blue-600" },
+    { label: "Faturamento", value: formatCurrency(metrics?.faturamento || 0), icon: DollarSign, color: "text-emerald-600" },
+    { label: "Faixa", value: `${((metrics?.porcentagem || 0) * 100).toFixed(0)}%`, icon: Percent, color: "text-cyan-600" },
     { label: "Comissão", value: formatCurrency(metrics?.comissao || 0), icon: DollarSign, color: "text-green-600" },
     { label: "Bônus", value: formatCurrency(metrics?.bonus || 0), icon: Award, color: "text-yellow-600" },
     { label: "Recorrência", value: formatCurrency(metrics?.recorrencia || 0), icon: TrendingUp, color: "text-purple-600" },
@@ -148,7 +151,7 @@ export default function SalesDashboard() {
 
         <TabsContent value="mensal" className="space-y-6">
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
             {stats.map((stat) => (
               <Card key={stat.label}>
                 <CardContent className="p-4">
@@ -162,6 +165,26 @@ export default function SalesDashboard() {
             ))}
           </div>
 
+          {/* Commission Tiers Info */}
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-sm font-medium mb-2">Faixas de Comissão</p>
+              <div className="flex flex-wrap gap-2 text-xs">
+                {[
+                  { range: "1-25", pct: "20%" },
+                  { range: "26-36", pct: "25%" },
+                  { range: "37-51", pct: "30%" },
+                  { range: "52-72", pct: "35%" },
+                  { range: "73-90", pct: "40%" },
+                ].map((f) => (
+                  <span key={f.range} className={`px-2 py-1 rounded ${metrics?.totalVendas >= parseInt(f.range) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                    {f.range} vendas → {f.pct}
+                  </span>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Total Card */}
           <Card className="bg-[#1800ad] text-white">
             <CardContent className="p-6 flex items-center justify-between">
@@ -171,7 +194,8 @@ export default function SalesDashboard() {
               </div>
               <div className="text-right text-sm text-white/60">
                 <p>Salário base: {formatCurrency(SALARIO_BASE)}</p>
-                <p>+ Comissões + Bônus + Recorrência</p>
+                <p>+ Comissão ({((metrics?.porcentagem || 0) * 100).toFixed(0)}% de {formatCurrency(metrics?.faturamento || 0)})</p>
+                <p>+ Bônus + Recorrência</p>
               </div>
             </CardContent>
           </Card>

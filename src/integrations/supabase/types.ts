@@ -50,29 +50,41 @@ export type Database = {
       cancelamentos: {
         Row: {
           ano: number
+          cancelamento_antecipado: boolean | null
           cliente_id: string | null
           created_at: string
+          data_cancelamento: string | null
           id: string
           mes: number
+          meses_ativo: number | null
           motivo: string | null
+          valor_multa: number | null
           vendedor_id: string
         }
         Insert: {
           ano: number
+          cancelamento_antecipado?: boolean | null
           cliente_id?: string | null
           created_at?: string
+          data_cancelamento?: string | null
           id?: string
           mes: number
+          meses_ativo?: number | null
           motivo?: string | null
+          valor_multa?: number | null
           vendedor_id: string
         }
         Update: {
           ano?: number
+          cancelamento_antecipado?: boolean | null
           cliente_id?: string | null
           created_at?: string
+          data_cancelamento?: string | null
           id?: string
           mes?: number
+          meses_ativo?: number | null
           motivo?: string | null
+          valor_multa?: number | null
           vendedor_id?: string
         }
         Relationships: [
