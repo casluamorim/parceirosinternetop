@@ -282,7 +282,7 @@ export function ImportSalesDialog({ open, onOpenChange, plans, vendedorId, canMa
         {/* Step: Done */}
         {step === "done" && (
           <div className="text-center py-6 space-y-4">
-            <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto" />
+            <CheckCircle2 className="w-12 h-12 text-primary mx-auto" />
             <p className="font-semibold">Importação concluída!</p>
             <Button onClick={() => handleClose(false)}>Fechar</Button>
           </div>
