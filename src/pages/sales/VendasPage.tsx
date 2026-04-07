@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Upload, Download } from "lucide-react";
+import { ImportSalesDialog } from "@/components/sales/ImportSalesDialog";
+import { ExportSalesDialog } from "@/components/sales/ExportSalesDialog";
 
 const sq = (table: string) => (supabase.from as any)(table);
 
@@ -24,6 +26,8 @@ export default function VendasPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ vendedor_id: "", plano_id: "", quantidade: "1" });
   const [loading, setLoading] = useState(true);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -124,10 +128,17 @@ export default function VendasPage() {
             </Select>
           </div>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button><Plus className="w-4 h-4 mr-2" />Nova Venda</Button>
-          </DialogTrigger>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setImportOpen(true)}>
+            <Upload className="w-4 h-4 mr-2" />Importar
+          </Button>
+          <Button variant="outline" onClick={() => setExportOpen(true)}>
+            <Download className="w-4 h-4 mr-2" />Exportar
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button><Plus className="w-4 h-4 mr-2" />Nova Venda</Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Registrar Venda</DialogTitle></DialogHeader>
             <div className="space-y-4">
@@ -155,7 +166,25 @@ export default function VendasPage() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
+
+      <ImportSalesDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        plans={planos}
+        vendedorId={salesUser?.id || ""}
+        canManage={canManage}
+        vendedores={vendedores}
+        onSuccess={loadData}
+      />
+      <ExportSalesDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        canManage={canManage}
+        vendedorId={salesUser?.id || ""}
+        vendedores={vendedores}
+      />
 
       <Card>
         <CardHeader><CardTitle>Vendas — {MESES[mes - 1]} {ano}</CardTitle></CardHeader>
