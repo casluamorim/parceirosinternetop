@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Upload, Download } from "lucide-react";
+import { ImportSalesDialog } from "@/components/sales/ImportSalesDialog";
+import { ExportSalesDialog } from "@/components/sales/ExportSalesDialog";
 
 const sq = (table: string) => (supabase.from as any)(table);
 
