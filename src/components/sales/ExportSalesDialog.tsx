@@ -64,7 +64,7 @@ export function ExportSalesDialog({ open, onOpenChange, canManage, vendedorId, v
         sellerTotals.set(v.vendedor_id, current);
       }
 
-      const rows: ExportRow[] = (vendas as any[]).map((v: any) => {
+      const rows: ExportRow[] = (vendas as any[]).map((v: any): ExportRow => {
         const plan = planMap.get(v.plano_id);
         const price = plan?.price || 0;
         const stats = sellerTotals.get(v.vendedor_id)!;
