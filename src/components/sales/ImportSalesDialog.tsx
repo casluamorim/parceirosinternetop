@@ -227,7 +227,7 @@ export function ImportSalesDialog({ open, onOpenChange, plans, vendedorId, canMa
         {step === "preview" && (
           <div className="space-y-4">
             <div className="flex gap-3">
-              <Badge variant="default" className="bg-green-600">
+              <Badge variant="default">
                 <CheckCircle2 className="w-3 h-3 mr-1" /> {validCount} válida(s)
               </Badge>
               {invalidCount > 0 && (
