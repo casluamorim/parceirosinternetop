@@ -137,13 +137,18 @@ export function PlanItemCard({ item, categoryName, onSubscribe, index = 0 }: Pla
         </motion.button>
       </div>
 
+      {/* Fidelidade */}
+      <p className="text-xs text-muted-foreground text-center mt-2">
+        📋 Fidelidade mínima de 12 meses
+      </p>
+
       {/* Terms link */}
       {item.terms_url && (
         <a
           href={item.terms_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-xs text-muted-foreground hover:text-primary text-center mt-2 underline"
+          className="text-xs text-muted-foreground hover:text-primary text-center mt-1 underline"
         >
           Termos e condições
         </a>
