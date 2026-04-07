@@ -26,6 +26,8 @@ export default function VendasPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState({ vendedor_id: "", plano_id: "", quantidade: "1" });
   const [loading, setLoading] = useState(true);
+  const [importOpen, setImportOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
 
   useEffect(() => {
     loadData();
