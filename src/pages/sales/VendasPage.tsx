@@ -128,10 +128,17 @@ export default function VendasPage() {
             </Select>
           </div>
         </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button><Plus className="w-4 h-4 mr-2" />Nova Venda</Button>
-          </DialogTrigger>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setImportOpen(true)}>
+            <Upload className="w-4 h-4 mr-2" />Importar
+          </Button>
+          <Button variant="outline" onClick={() => setExportOpen(true)}>
+            <Download className="w-4 h-4 mr-2" />Exportar
+          </Button>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button><Plus className="w-4 h-4 mr-2" />Nova Venda</Button>
+            </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Registrar Venda</DialogTitle></DialogHeader>
             <div className="space-y-4">
