@@ -71,7 +71,7 @@ export function ExportSalesDialog({ open, onOpenChange, canManage, vendedorId, v
         const pct = getPercentualComissao(stats.totalVendas);
 
         return {
-          vendedor: sellerMap.get(v.vendedor_id) || "—",
+          vendedor: (sellerMap.get(v.vendedor_id) as string) || "—",
           plano: plan ? `${plan.name} (${plan.speed}MB)` : "—",
           velocidade: plan?.speed || 0,
           quantidade: v.quantidade,
