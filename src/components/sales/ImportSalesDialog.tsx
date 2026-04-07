@@ -254,7 +254,7 @@ export function ImportSalesDialog({ open, onOpenChange, plans, vendedorId, canMa
                     <TableRow key={i} className={row.valid ? "" : "bg-destructive/5"}>
                       <TableCell>
                         {row.valid ? (
-                          <CheckCircle2 className="w-4 h-4 text-green-600" />
+                          <CheckCircle2 className="w-4 h-4 text-primary" />
                         ) : (
                           <AlertTriangle className="w-4 h-4 text-destructive" />
                         )}
