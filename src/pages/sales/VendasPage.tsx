@@ -166,7 +166,25 @@ export default function VendasPage() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
+
+      <ImportSalesDialog
+        open={importOpen}
+        onOpenChange={setImportOpen}
+        plans={planos}
+        vendedorId={salesUser?.id || ""}
+        canManage={canManage}
+        vendedores={vendedores}
+        onSuccess={loadData}
+      />
+      <ExportSalesDialog
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        canManage={canManage}
+        vendedorId={salesUser?.id || ""}
+        vendedores={vendedores}
+      />
 
       <Card>
         <CardHeader><CardTitle>Vendas — {MESES[mes - 1]} {ano}</CardTitle></CardHeader>
