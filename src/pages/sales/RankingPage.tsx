@@ -46,7 +46,7 @@ export default function RankingPage() {
       const sCancels = (allCancels || []).filter((c: any) => c.vendedor_id === s.id).length;
       const result = calcularGanho(
         sVendas.map((v: any) => ({ plano_id: v.plano_id, quantidade: v.quantidade })),
-        planos, [], null, null, sCancels
+        planos, [], null, null, sCancels, faixas
       );
       return { name: s.name, totalVendas: result.totalVendas, faturamento: result.faturamento, porcentagem: result.porcentagem, comissao: result.comissao, cancelamentos: sCancels, score: result.score };
     });
