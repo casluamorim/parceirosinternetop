@@ -25,6 +25,7 @@ export function ExportSalesDialog({ open, onOpenChange, canManage, vendedorId, v
   const [ano, setAno] = useState(String(now.getFullYear()));
   const [filterVendedor, setFilterVendedor] = useState("all");
   const [exporting, setExporting] = useState(false);
+  const { faixas } = useFaixasComissao();
 
   const handleExport = async () => {
     setExporting(true);
