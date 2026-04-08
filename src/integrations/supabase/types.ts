@@ -167,6 +167,33 @@ export type Database = {
           },
         ]
       }
+      faixas_comissao: {
+        Row: {
+          created_at: string
+          id: string
+          max_vendas: number
+          min_vendas: number
+          percentual: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_vendas: number
+          min_vendas: number
+          percentual: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_vendas?: number
+          min_vendas?: number
+          percentual?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investimento_mensal: {
         Row: {
           ano: number
