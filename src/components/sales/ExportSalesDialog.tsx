@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { Download, FileSpreadsheet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { MESES, getPercentualComissao } from "@/lib/sales-utils";
+import { useFaixasComissao } from "@/hooks/useFaixasComissao";
 import { exportSalesXlsx, type ExportRow } from "@/lib/sales-spreadsheet";
 
 const sq = (table: string) => (supabase.from as any)(table);
