@@ -6,6 +6,7 @@ import { toast } from "@/hooks/use-toast";
 import { Download, FileSpreadsheet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { MESES, getPercentualComissao } from "@/lib/sales-utils";
+import { useFaixasComissao } from "@/hooks/useFaixasComissao";
 import { exportSalesXlsx, type ExportRow } from "@/lib/sales-spreadsheet";
 
 const sq = (table: string) => (supabase.from as any)(table);
@@ -24,6 +25,7 @@ export function ExportSalesDialog({ open, onOpenChange, canManage, vendedorId, v
   const [ano, setAno] = useState(String(now.getFullYear()));
   const [filterVendedor, setFilterVendedor] = useState("all");
   const [exporting, setExporting] = useState(false);
+  const { faixas } = useFaixasComissao();
 
   const handleExport = async () => {
     setExporting(true);
@@ -68,7 +70,7 @@ export function ExportSalesDialog({ open, onOpenChange, canManage, vendedorId, v
         const plan = planMap.get(v.plano_id);
         const price = plan?.price || 0;
         const stats = sellerTotals.get(v.vendedor_id)!;
-        const pct = getPercentualComissao(stats.totalVendas);
+        const pct = getPercentualComissao(stats.totalVendas, faixas);
 
         return {
           vendedor: (sellerMap.get(v.vendedor_id) as string) || "—",

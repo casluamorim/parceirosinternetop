@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
+import { useFaixasComissao } from "@/hooks/useFaixasComissao";
 import { calcularGanho, formatCurrency, SALARIO_BASE, MESES, getPercentualComissao } from "@/lib/sales-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,6 +13,7 @@ const sq = (table: string) => (supabase.from as any)(table);
 
 export default function SalesDashboard() {
   const { salesUser, canManage } = useSalesAuth();
+  const { faixas } = useFaixasComissao();
   const now = new Date();
   const [mes, setMes] = useState(now.getMonth() + 1);
   const [ano, setAno] = useState(now.getFullYear());
@@ -64,7 +66,8 @@ export default function SalesDashboard() {
       (metas || []).map((m: any) => ({ min_vendas: m.min_vendas, bonus: Number(m.bonus) })),
       metaInd?.[0] ? { meta: metaInd[0].meta } : null,
       recorrencia ? { valor: Number(recorrencia.valor) } : null,
-      (cancels || []).length
+      (cancels || []).length,
+      faixas
     );
 
     setMetrics(result);

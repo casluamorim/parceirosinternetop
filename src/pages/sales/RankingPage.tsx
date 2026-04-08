@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
+import { useFaixasComissao } from "@/hooks/useFaixasComissao";
 import { MESES, formatCurrency, calcularGanho } from "@/lib/sales-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,6 +22,7 @@ interface RankEntry {
 
 export default function RankingPage() {
   const { salesUser } = useSalesAuth();
+  const { faixas } = useFaixasComissao();
   const now = new Date();
   const [mes, setMes] = useState(now.getMonth() + 1);
   const [ano, setAno] = useState(now.getFullYear());
@@ -44,7 +46,7 @@ export default function RankingPage() {
       const sCancels = (allCancels || []).filter((c: any) => c.vendedor_id === s.id).length;
       const result = calcularGanho(
         sVendas.map((v: any) => ({ plano_id: v.plano_id, quantidade: v.quantidade })),
-        planos, [], null, null, sCancels
+        planos, [], null, null, sCancels, faixas
       );
       return { name: s.name, totalVendas: result.totalVendas, faturamento: result.faturamento, porcentagem: result.porcentagem, comissao: result.comissao, cancelamentos: sCancels, score: result.score };
     });

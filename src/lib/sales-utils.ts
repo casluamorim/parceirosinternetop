@@ -2,13 +2,22 @@ export const SALARIO_BASE = 1950;
 export const FIDELIDADE_MESES = 12;
 export const MULTA_PERCENTUAL = 0.10;
 
-export const FAIXAS_COMISSAO = [
+export interface FaixaComissao {
+  min: number;
+  max: number;
+  percentual: number;
+}
+
+export const FAIXAS_COMISSAO_DEFAULT: FaixaComissao[] = [
   { min: 1, max: 25, percentual: 0.20 },
   { min: 26, max: 36, percentual: 0.25 },
   { min: 37, max: 51, percentual: 0.30 },
   { min: 52, max: 72, percentual: 0.35 },
   { min: 73, max: 90, percentual: 0.40 },
 ];
+
+// Keep backward compat
+export const FAIXAS_COMISSAO = FAIXAS_COMISSAO_DEFAULT;
 
 interface VendaCalc {
   plano_id: string;
@@ -33,13 +42,18 @@ interface RecorrenciaCalc {
   valor: number;
 }
 
-export function getPercentualComissao(totalVendas: number): number {
-  for (const faixa of FAIXAS_COMISSAO) {
+export function getPercentualComissao(totalVendas: number, faixas?: FaixaComissao[]): number {
+  const f = faixas || FAIXAS_COMISSAO_DEFAULT;
+  const sorted = [...f].sort((a, b) => a.min - b.min);
+  for (const faixa of sorted) {
     if (totalVendas >= faixa.min && totalVendas <= faixa.max) {
       return faixa.percentual;
     }
   }
-  if (totalVendas > 90) return 0.40;
+  // Above max tier → use highest percentual
+  if (sorted.length > 0 && totalVendas > sorted[sorted.length - 1].max) {
+    return sorted[sorted.length - 1].percentual;
+  }
   return 0;
 }
 
@@ -49,7 +63,8 @@ export function calcularGanho(
   metas: MetaCalc[],
   metaIndividual: MetaIndividual | null,
   recorrencia: RecorrenciaCalc | null,
-  cancelamentos: number
+  cancelamentos: number,
+  faixas?: FaixaComissao[]
 ) {
   let totalVendas = 0;
   let faturamento = 0;
@@ -61,7 +76,7 @@ export function calcularGanho(
     faturamento += v.quantidade * plano.preco;
   });
 
-  const porcentagem = getPercentualComissao(totalVendas);
+  const porcentagem = getPercentualComissao(totalVendas, faixas);
   const comissao = faturamento * porcentagem;
 
   let bonus = 0;
