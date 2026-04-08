@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
+import { useFaixasComissao } from "@/hooks/useFaixasComissao";
 import { calcularGanho, formatCurrency, SALARIO_BASE, MESES, getPercentualComissao } from "@/lib/sales-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
