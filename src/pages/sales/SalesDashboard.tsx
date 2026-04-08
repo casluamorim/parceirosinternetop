@@ -66,7 +66,8 @@ export default function SalesDashboard() {
       (metas || []).map((m: any) => ({ min_vendas: m.min_vendas, bonus: Number(m.bonus) })),
       metaInd?.[0] ? { meta: metaInd[0].meta } : null,
       recorrencia ? { valor: Number(recorrencia.valor) } : null,
-      (cancels || []).length
+      (cancels || []).length,
+      faixas
     );
 
     setMetrics(result);
