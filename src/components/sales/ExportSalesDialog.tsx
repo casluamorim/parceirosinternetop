@@ -70,7 +70,7 @@ export function ExportSalesDialog({ open, onOpenChange, canManage, vendedorId, v
         const plan = planMap.get(v.plano_id);
         const price = plan?.price || 0;
         const stats = sellerTotals.get(v.vendedor_id)!;
-        const pct = getPercentualComissao(stats.totalVendas);
+        const pct = getPercentualComissao(stats.totalVendas, faixas);
 
         return {
           vendedor: (sellerMap.get(v.vendedor_id) as string) || "—",
