@@ -22,6 +22,7 @@ interface RankEntry {
 
 export default function RankingPage() {
   const { salesUser } = useSalesAuth();
+  const { faixas } = useFaixasComissao();
   const now = new Date();
   const [mes, setMes] = useState(now.getMonth() + 1);
   const [ano, setAno] = useState(now.getFullYear());
