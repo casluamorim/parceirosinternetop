@@ -107,6 +107,8 @@ export default function SalesDashboard() {
     { label: "Recorrência", value: formatCurrency(metrics?.recorrencia || 0), icon: TrendingUp, color: "text-purple-600" },
     { label: "Cancelamentos", value: metrics?.cancelamentos || 0, icon: AlertTriangle, color: "text-red-600" },
     { label: "Score", value: metrics?.score || 0, icon: Target, color: "text-indigo-600" },
+    { label: "Investimento Mkt", value: formatCurrency(metrics?.investimento || 0), icon: DollarSign, color: "text-orange-600" },
+    { label: "CAC", value: metrics?.totalVendas > 0 ? formatCurrency(metrics?.cac || 0) : "Sem dados", icon: Target, color: "text-pink-600" },
   ];
 
   return (
