@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, Navigate } from "react-router-dom";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
 import {
   LayoutDashboard, ShoppingCart, Users, XCircle, Target,
-  Trophy, Settings, UserCog, Menu, X, LogOut, ChevronLeft,
+  Trophy, Settings, UserCog, Menu, X, LogOut, ChevronLeft, Receipt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
