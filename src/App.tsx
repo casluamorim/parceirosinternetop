@@ -15,6 +15,7 @@ import MetasPage from "./pages/sales/MetasPage";
 import RankingPage from "./pages/sales/RankingPage";
 import UsuariosPage from "./pages/sales/UsuariosPage";
 import ConfigPage from "./pages/sales/ConfigPage";
+import DespesasPage from "./pages/sales/DespesasPage";
 
 const queryClient = new QueryClient();
 
