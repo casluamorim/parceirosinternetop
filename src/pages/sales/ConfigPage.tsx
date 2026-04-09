@@ -264,8 +264,8 @@ export default function ConfigPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Investimento Mensal</CardTitle>
-            <CardDescription>Para cálculo do CAC</CardDescription>
+            <CardTitle>Investimento em Marketing e Anúncios</CardTitle>
+            <CardDescription>Total investido no mês (tráfego pago, Meta Ads, Google Ads, etc.) — usado para calcular o CAC automaticamente</CardDescription>
           </CardHeader>
           <CardContent className="flex gap-3">
             <Input type="number" placeholder="R$ 0,00" value={investimentoValor} onChange={(e) => setInvestimentoValor(e.target.value)} />

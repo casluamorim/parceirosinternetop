@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
 import { useFaixasComissao } from "@/hooks/useFaixasComissao";
-import { calcularGanho, formatCurrency, SALARIO_BASE, MESES, getPercentualComissao } from "@/lib/sales-utils";
+import { calcularGanho, calcularCAC, formatCurrency, SALARIO_BASE, MESES, getPercentualComissao } from "@/lib/sales-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -44,7 +44,6 @@ export default function SalesDashboard() {
     if (targetVendedorId) vendasQuery = vendasQuery.eq("vendedor_id", targetVendedorId);
     const { data: vendas } = await vendasQuery;
 
-    // Get plan prices from plan_items
     const { data: planItems } = await supabase.from("plan_items").select("id, price").eq("active", true);
     const planos = (planItems || []).map((p: any) => ({ id: p.id, preco: Number(p.price) }));
 
@@ -60,6 +59,9 @@ export default function SalesDashboard() {
     if (targetVendedorId) cancelQuery = cancelQuery.eq("vendedor_id", targetVendedorId);
     const { data: cancels } = await cancelQuery;
 
+    // Fetch investimento for CAC calculation
+    const { data: investimento } = await sq("investimento_mensal").select("valor").eq("mes", mes).eq("ano", ano).maybeSingle();
+
     const result = calcularGanho(
       (vendas || []).map((v: any) => ({ plano_id: v.plano_id, quantidade: v.quantidade })),
       planos,
@@ -70,7 +72,10 @@ export default function SalesDashboard() {
       faixas
     );
 
-    setMetrics(result);
+    const investimentoVal = investimento ? Number(investimento.valor) : 0;
+    const cac = calcularCAC(investimentoVal, result.totalVendas);
+
+    setMetrics({ ...result, investimento: investimentoVal, cac });
     setLoading(false);
   };
 
@@ -102,6 +107,8 @@ export default function SalesDashboard() {
     { label: "Recorrência", value: formatCurrency(metrics?.recorrencia || 0), icon: TrendingUp, color: "text-purple-600" },
     { label: "Cancelamentos", value: metrics?.cancelamentos || 0, icon: AlertTriangle, color: "text-red-600" },
     { label: "Score", value: metrics?.score || 0, icon: Target, color: "text-indigo-600" },
+    { label: "Investimento Mkt", value: formatCurrency(metrics?.investimento || 0), icon: DollarSign, color: "text-orange-600" },
+    { label: "CAC", value: metrics?.totalVendas > 0 ? formatCurrency(metrics?.cac || 0) : "Sem dados", icon: Target, color: "text-pink-600" },
   ];
 
   return (
@@ -173,15 +180,9 @@ export default function SalesDashboard() {
             <CardContent className="p-4">
               <p className="text-sm font-medium mb-2">Faixas de Comissão</p>
               <div className="flex flex-wrap gap-2 text-xs">
-                {[
-                  { range: "1-25", pct: "20%" },
-                  { range: "26-36", pct: "25%" },
-                  { range: "37-51", pct: "30%" },
-                  { range: "52-72", pct: "35%" },
-                  { range: "73-90", pct: "40%" },
-                ].map((f) => (
-                  <span key={f.range} className={`px-2 py-1 rounded ${metrics?.totalVendas >= parseInt(f.range) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
-                    {f.range} vendas → {f.pct}
+                {faixas.map((f) => (
+                  <span key={`${f.min}-${f.max}`} className={`px-2 py-1 rounded ${metrics?.totalVendas >= f.min ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                    {f.min}-{f.max} vendas → {(f.percentual * 100).toFixed(0)}%
                   </span>
                 ))}
               </div>
