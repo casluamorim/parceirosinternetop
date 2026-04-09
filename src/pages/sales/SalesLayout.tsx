@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, Navigate } from "react-router-dom";
 import { useSalesAuth } from "@/hooks/useSalesAuth";
 import {
   LayoutDashboard, ShoppingCart, Users, XCircle, Target,
-  Trophy, Settings, UserCog, Menu, X, LogOut, ChevronLeft,
+  Trophy, Settings, UserCog, Menu, X, LogOut, ChevronLeft, Receipt,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ const navItems = [
   { path: "/sales/cancelamentos", label: "Cancelamentos", icon: XCircle, roles: ["vendedor", "financeiro", "admin"] },
   { path: "/sales/metas", label: "Metas", icon: Target, roles: ["financeiro", "admin"] },
   { path: "/sales/ranking", label: "Ranking", icon: Trophy, roles: ["vendedor", "financeiro", "admin"] },
+  { path: "/sales/despesas", label: "Despesas", icon: Receipt, roles: ["financeiro", "admin"] },
   { path: "/sales/config", label: "Configurações", icon: Settings, roles: ["financeiro", "admin"] },
   { path: "/sales/usuarios", label: "Usuários", icon: UserCog, roles: ["admin"] },
 ];
