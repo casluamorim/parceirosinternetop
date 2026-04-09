@@ -15,6 +15,7 @@ const navItems = [
   { path: "/sales/cancelamentos", label: "Cancelamentos", icon: XCircle, roles: ["vendedor", "financeiro", "admin"] },
   { path: "/sales/metas", label: "Metas", icon: Target, roles: ["financeiro", "admin"] },
   { path: "/sales/ranking", label: "Ranking", icon: Trophy, roles: ["vendedor", "financeiro", "admin"] },
+  { path: "/sales/despesas", label: "Despesas", icon: Receipt, roles: ["financeiro", "admin"] },
   { path: "/sales/config", label: "Configurações", icon: Settings, roles: ["financeiro", "admin"] },
   { path: "/sales/usuarios", label: "Usuários", icon: UserCog, roles: ["admin"] },
 ];

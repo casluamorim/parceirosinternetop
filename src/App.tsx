@@ -38,6 +38,7 @@ const App = () => (
             <Route path="metas" element={<MetasPage />} />
             <Route path="ranking" element={<RankingPage />} />
             <Route path="usuarios" element={<UsuariosPage />} />
+            <Route path="despesas" element={<DespesasPage />} />
             <Route path="config" element={<ConfigPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
