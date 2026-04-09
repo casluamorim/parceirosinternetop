@@ -180,15 +180,9 @@ export default function SalesDashboard() {
             <CardContent className="p-4">
               <p className="text-sm font-medium mb-2">Faixas de Comissão</p>
               <div className="flex flex-wrap gap-2 text-xs">
-                {[
-                  { range: "1-25", pct: "20%" },
-                  { range: "26-36", pct: "25%" },
-                  { range: "37-51", pct: "30%" },
-                  { range: "52-72", pct: "35%" },
-                  { range: "73-90", pct: "40%" },
-                ].map((f) => (
-                  <span key={f.range} className={`px-2 py-1 rounded ${metrics?.totalVendas >= parseInt(f.range) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
-                    {f.range} vendas → {f.pct}
+                {faixas.map((f) => (
+                  <span key={`${f.min}-${f.max}`} className={`px-2 py-1 rounded ${metrics?.totalVendas >= f.min ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+                    {f.min}-{f.max} vendas → {(f.percentual * 100).toFixed(0)}%
                   </span>
                 ))}
               </div>
