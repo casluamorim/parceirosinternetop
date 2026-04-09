@@ -44,7 +44,6 @@ export default function SalesDashboard() {
     if (targetVendedorId) vendasQuery = vendasQuery.eq("vendedor_id", targetVendedorId);
     const { data: vendas } = await vendasQuery;
 
-    // Get plan prices from plan_items
     const { data: planItems } = await supabase.from("plan_items").select("id, price").eq("active", true);
     const planos = (planItems || []).map((p: any) => ({ id: p.id, preco: Number(p.price) }));
 
@@ -60,6 +59,9 @@ export default function SalesDashboard() {
     if (targetVendedorId) cancelQuery = cancelQuery.eq("vendedor_id", targetVendedorId);
     const { data: cancels } = await cancelQuery;
 
+    // Fetch investimento for CAC calculation
+    const { data: investimento } = await sq("investimento_mensal").select("valor").eq("mes", mes).eq("ano", ano).maybeSingle();
+
     const result = calcularGanho(
       (vendas || []).map((v: any) => ({ plano_id: v.plano_id, quantidade: v.quantidade })),
       planos,
@@ -70,7 +72,10 @@ export default function SalesDashboard() {
       faixas
     );
 
-    setMetrics(result);
+    const investimentoVal = investimento ? Number(investimento.valor) : 0;
+    const cac = calcularCAC(investimentoVal, result.totalVendas);
+
+    setMetrics({ ...result, investimento: investimentoVal, cac });
     setLoading(false);
   };
 
