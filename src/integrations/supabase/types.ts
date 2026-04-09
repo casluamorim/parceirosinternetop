@@ -167,6 +167,36 @@ export type Database = {
           },
         ]
       }
+      despesas: {
+        Row: {
+          ano: number
+          categoria: string
+          created_at: string
+          id: string
+          mes: number
+          nome: string
+          valor: number
+        }
+        Insert: {
+          ano: number
+          categoria?: string
+          created_at?: string
+          id?: string
+          mes: number
+          nome: string
+          valor?: number
+        }
+        Update: {
+          ano?: number
+          categoria?: string
+          created_at?: string
+          id?: string
+          mes?: number
+          nome?: string
+          valor?: number
+        }
+        Relationships: []
+      }
       faixas_comissao: {
         Row: {
           created_at: string
