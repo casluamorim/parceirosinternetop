@@ -16,6 +16,7 @@ import RankingPage from "./pages/sales/RankingPage";
 import UsuariosPage from "./pages/sales/UsuariosPage";
 import ConfigPage from "./pages/sales/ConfigPage";
 import DespesasPage from "./pages/sales/DespesasPage";
+import VendedoresPage from "./pages/sales/VendedoresPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="cancelamentos" element={<CancelamentosPage />} />
             <Route path="metas" element={<MetasPage />} />
             <Route path="ranking" element={<RankingPage />} />
+            <Route path="vendedores" element={<VendedoresPage />} />
             <Route path="usuarios" element={<UsuariosPage />} />
             <Route path="despesas" element={<DespesasPage />} />
             <Route path="config" element={<ConfigPage />} />
