@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { path: "/sales", label: "Dashboard", icon: LayoutDashboard, roles: ["vendedor", "financeiro", "admin"] },
+  { path: "/sales/vendedores", label: "Vendedores", icon: Users, roles: ["financeiro", "admin"] },
   { path: "/sales/vendas", label: "Vendas", icon: ShoppingCart, roles: ["vendedor", "financeiro", "admin"] },
   { path: "/sales/clientes", label: "Clientes", icon: Users, roles: ["vendedor", "financeiro", "admin"] },
   { path: "/sales/cancelamentos", label: "Cancelamentos", icon: XCircle, roles: ["vendedor", "financeiro", "admin"] },
