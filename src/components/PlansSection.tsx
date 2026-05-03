@@ -325,7 +325,7 @@ export function PlansSection() {
           transition={{ delay: 0.6, duration: 0.5 }}
         >
           <p className="text-sm text-muted-foreground">
-            Todos os planos incluem: instalação gratuita • Wi-Fi incluso • Sem taxa de adesão • Sem fidelidade
+            Todos os planos incluem: instalação gratuita • Wi-Fi incluso • Sem taxa de adesão • Fidelidade de 12 meses
           </p>
         </motion.div>
       </div>
