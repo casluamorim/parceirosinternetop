@@ -11,6 +11,7 @@ import { PlansCombosTab } from "@/components/admin/PlansCombosTab";
  import { TestimonialsTab } from "@/components/admin/TestimonialsTab";
  import { TrustedCompaniesTab } from "@/components/admin/TrustedCompaniesTab";
  import { SettingsTab } from "@/components/admin/SettingsTab";
+ import { CoverageTab } from "@/components/admin/CoverageTab";
 
 export default function Admin() {
   const { user, isAdmin, loading, signOut } = useAuth();
