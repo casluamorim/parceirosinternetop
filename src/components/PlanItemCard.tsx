@@ -32,18 +32,18 @@ export function PlanItemCard({ item, categoryName, onSubscribe, index = 0 }: Pla
       {/* Badge */}
       {item.badge && (
         <motion.div
-          className="absolute -top-3 left-1/2 -translate-x-1/2"
+          className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1rem)]"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ delay: index * 0.1 + 0.3, duration: 0.3 }}
         >
           <span
-            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${
+            className={`inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap shadow-md ${
               item.popular ? "bg-primary text-white" : "bg-accent text-primary"
             }`}
           >
-            {item.popular && <Zap className="w-3 h-3" />}
+            {item.popular && <Zap className="w-3 h-3 flex-shrink-0" />}
             {item.badge}
           </span>
         </motion.div>
