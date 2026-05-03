@@ -76,7 +76,7 @@ export function PlanItemCard({ item, categoryName, onSubscribe, index = 0 }: Pla
             R$ {Number(item.original_price).toFixed(2).replace(".", ",")}
           </div>
         )}
-        <div className="flex items-baseline justify-center gap-1">
+        <div className="flex items-baseline justify-center gap-1 whitespace-nowrap flex-nowrap">
           <span className="text-sm text-muted-foreground">R$</span>
           <span className="text-4xl font-display font-bold text-foreground">
             {Math.floor(item.price)}
