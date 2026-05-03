@@ -233,11 +233,11 @@ export function HeroSection() {
             {/* Promo Badge */}
             {promo.active && (
               <motion.div 
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6"
+                className="inline-flex flex-wrap items-center justify-center lg:justify-start gap-2 px-4 py-2 bg-primary/10 rounded-full mb-6 max-w-full"
                 variants={itemVariants}
               >
-                <span className="badge-primary">{promo.title}</span>
-                <span className="text-sm font-medium text-foreground">
+                <span className="badge-primary whitespace-nowrap">{promo.title}</span>
+                <span className="text-sm font-medium text-foreground whitespace-normal sm:whitespace-nowrap">
                   {promo.discountText}
                 </span>
               </motion.div>
