@@ -317,7 +317,7 @@ export const faqs = [
   },
   {
     question: "Preciso de fidelidade?",
-    answer: "Não! Trabalhamos sem fidelidade. Você fica porque quer, não porque é obrigado.",
+    answer: "Sim. Todos os planos têm fidelidade de 12 meses, com multa de 10% sobre o valor dos meses restantes em caso de cancelamento antecipado.",
   },
   {
     question: "O Wi-Fi está incluso?",

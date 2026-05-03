@@ -32,7 +32,7 @@ export function PlanItemCard({ item, categoryName, onSubscribe, index = 0 }: Pla
       {/* Badge */}
       {item.badge && (
         <motion.div
-          className="absolute -top-3 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-1rem)]"
+          className="absolute -top-3 left-1/2 -translate-x-1/2 z-20"
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
