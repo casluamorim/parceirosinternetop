@@ -167,6 +167,30 @@ export type Database = {
           },
         ]
       }
+      coverage_areas: {
+        Row: {
+          ativo: boolean
+          city: string
+          created_at: string
+          id: string
+          neighborhood: string
+        }
+        Insert: {
+          ativo?: boolean
+          city: string
+          created_at?: string
+          id?: string
+          neighborhood: string
+        }
+        Update: {
+          ativo?: boolean
+          city?: string
+          created_at?: string
+          id?: string
+          neighborhood?: string
+        }
+        Relationships: []
+      }
       despesas: {
         Row: {
           ano: number
