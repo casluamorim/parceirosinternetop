@@ -113,29 +113,8 @@ export default function Admin() {
            </TabsContent>
 
           {/* Coverage Tab */}
-          <TabsContent value="coverage" className="space-y-6">
-            {siteConfig.coverage.cities.map((city) => (
-              <Card key={city}>
-                <CardHeader>
-                  <CardTitle>{city}</CardTitle>
-                  <CardDescription>
-                    {siteConfig.coverage.neighborhoods[city as keyof typeof siteConfig.coverage.neighborhoods]?.length || 0} bairros atendidos
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-2">
-                    {siteConfig.coverage.neighborhoods[city as keyof typeof siteConfig.coverage.neighborhoods]?.map((neighborhood) => (
-                      <span
-                        key={neighborhood}
-                        className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
-                      >
-                        {neighborhood}
-                      </span>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <TabsContent value="coverage">
+            <CoverageTab />
           </TabsContent>
 
            {/* Testimonials Tab */}
