@@ -188,7 +188,7 @@ export function PlansSection() {
             viewport={{ once: true }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            Internet fibra óptica de alta velocidade com instalação grátis, Wi-Fi incluso e sem fidelidade.
+            Internet fibra óptica de alta velocidade com instalação grátis e Wi-Fi incluso.
           </motion.p>
         </motion.div>
 
