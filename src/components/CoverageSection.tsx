@@ -1,13 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, Check, Search } from "lucide-react";
 import { siteConfig } from "@/lib/config";
+import { supabase } from "@/integrations/supabase/client";
 
 export function CoverageSection() {
   const [selectedCity, setSelectedCity] = useState<string>(siteConfig.coverage.cities[0]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [neighborhoods, setNeighborhoods] = useState<string[]>([]);
 
-  const neighborhoods = siteConfig.coverage.neighborhoods[selectedCity as keyof typeof siteConfig.coverage.neighborhoods] || [];
-  
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data } = await supabase
+        .from("coverage_areas")
+        .select("neighborhood")
+        .eq("city", selectedCity)
+        .eq("ativo", true)
+        .order("neighborhood", { ascending: true });
+      if (!active) return;
+      if (data && data.length > 0) {
+        setNeighborhoods(data.map((d: any) => d.neighborhood));
+      } else {
+        // fallback to static config
+        const fallback = (siteConfig.coverage.neighborhoods as Record<string, string[]>)[selectedCity] || [];
+        setNeighborhoods(fallback);
+      }
+    })();
+    return () => { active = false; };
+  }, [selectedCity]);
+
   const filteredNeighborhoods = neighborhoods.filter((n) =>
     n.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -90,7 +111,7 @@ export function CoverageSection() {
 
             {filteredNeighborhoods.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
-                Nenhum bairro encontrado com "{searchTerm}"
+                A disponibilidade pode variar por endereço. Consulte pelo CEP.
               </p>
             )}
 
