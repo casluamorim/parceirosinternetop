@@ -39,13 +39,21 @@ export function CoverageTab() {
   useEffect(() => { fetchAreas(); }, []);
 
   const handleAdd = async () => {
-    if (!neighborhood.trim()) {
+    const name = neighborhood.trim();
+    if (!name) {
       toast.error("Informe o nome do bairro");
+      return;
+    }
+    const duplicate = areas.some(
+      (a) => a.city === city && a.neighborhood.toLowerCase() === name.toLowerCase()
+    );
+    if (duplicate) {
+      toast.error(`O bairro "${name}" já existe em ${city}`);
       return;
     }
     const { error } = await supabase
       .from("coverage_areas")
-      .insert({ city, neighborhood: neighborhood.trim(), ativo: true });
+      .insert({ city, neighborhood: name, ativo: true });
     if (error) {
       toast.error("Erro ao adicionar bairro");
       return;
