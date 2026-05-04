@@ -327,10 +327,10 @@ export function PlansCombosTab() {
                     <CollapsibleContent>
                       <div className="space-y-3 mt-2">
                         {catItems.map((item) => (
-                          <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
-                            <div className="flex-1">
+                          <div key={item.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 border rounded-lg">
+                            <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <h4 className="font-semibold">{item.name}</h4>
+                                <h4 className="font-semibold break-words">{item.name}</h4>
                                 {item.badge && (
                                   <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{item.badge}</span>
                                 )}
