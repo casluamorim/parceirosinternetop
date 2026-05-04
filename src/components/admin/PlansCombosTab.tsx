@@ -282,15 +282,15 @@ export function PlansCombosTab() {
             <h4 className="font-semibold mb-4">Gerenciar Categorias</h4>
             <div className="space-y-3">
               {categories.map((cat) => (
-                <div key={cat.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                <div key={cat.id} className="flex flex-wrap items-center gap-3 p-3 border rounded-lg">
                   <Switch checked={cat.active} onCheckedChange={(v) => toggleCategoryActive(cat.id, v)} />
                   <Input
                     value={editingCatNames[cat.id] || ""}
                     onChange={(e) => setEditingCatNames((p) => ({ ...p, [cat.id]: e.target.value }))}
                     onBlur={() => renameCat(cat.id)}
-                    className="max-w-[200px]"
+                    className="w-full sm:max-w-[200px]"
                   />
-                  <div className="flex items-center gap-2 ml-auto">
+                  <div className="flex items-center gap-2 sm:ml-auto">
                     <Label className="text-xs text-muted-foreground whitespace-nowrap">Aba padrão</Label>
                     <input
                       type="radio"
