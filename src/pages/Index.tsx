@@ -10,6 +10,7 @@ import { BusinessSection } from "@/components/BusinessSection";
 import { SupportSection } from "@/components/SupportSection";
 import { ReferralSection } from "@/components/ReferralSection";
 import { FloatingChat } from "@/components/FloatingChat";
+import { PrivacyConsentBanner } from "@/components/PrivacyConsentBanner";
 
 const Index = () => {
   return (
@@ -28,6 +29,7 @@ const Index = () => {
       </main>
       <Footer />
       <FloatingChat />
+      <PrivacyConsentBanner />
     </div>
   );
 };

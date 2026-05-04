@@ -150,10 +150,10 @@ export function Footer() {
               © {new Date().getFullYear()} {siteConfig.company.name}. Todos os direitos reservados.
             </p>
             <div className="flex items-center gap-6">
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="/politica-de-privacidade" className="hover:text-white transition-colors">
                 Política de Privacidade
               </a>
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="/termos-de-uso" className="hover:text-white transition-colors">
                 Termos de Uso
               </a>
               <a href="/admin" className="hover:text-white transition-colors opacity-50 hover:opacity-100">
