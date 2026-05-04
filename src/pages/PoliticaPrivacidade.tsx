@@ -121,9 +121,9 @@ export default function PoliticaPrivacidade() {
               entre em contato pelos canais oficiais:
             </p>
             <ul>
-              <li>WhatsApp: {siteConfig.contact.whatsappFormatted ?? siteConfig.contact.whatsapp}</li>
+              <li>WhatsApp: {siteConfig.contact.whatsappDisplay}</li>
               <li>Telefone: {siteConfig.contact.phone}</li>
-              <li>Endereço: {siteConfig.company.address}</li>
+              <li>Endereço: {siteConfig.address.full}</li>
             </ul>
           </Section>
         </article>
