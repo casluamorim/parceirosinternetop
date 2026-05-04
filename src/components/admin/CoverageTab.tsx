@@ -140,44 +140,46 @@ export function CoverageTab() {
           ) : filtered.length === 0 ? (
             <p className="text-center py-8 text-muted-foreground">Nenhum bairro encontrado</p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Bairro</TableHead>
-                  <TableHead>Cidade</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map(area => (
-                  <TableRow key={area.id}>
-                    <TableCell className="font-medium">{area.neighborhood}</TableCell>
-                    <TableCell>{area.city}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={area.ativo}
-                          onCheckedChange={(v) => handleToggle(area.id, v)}
-                        />
-                        <span className="text-sm text-muted-foreground">
-                          {area.ativo ? "Ativo" : "Inativo"}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(area.id)}
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    </TableCell>
+            <div className="w-full overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Bairro</TableHead>
+                    <TableHead>Cidade</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map(area => (
+                    <TableRow key={area.id}>
+                      <TableCell className="font-medium">{area.neighborhood}</TableCell>
+                      <TableCell>{area.city}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={area.ativo}
+                            onCheckedChange={(v) => handleToggle(area.id, v)}
+                          />
+                          <span className="text-sm text-muted-foreground">
+                            {area.ativo ? "Ativo" : "Inativo"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(area.id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-destructive" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

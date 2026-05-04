@@ -261,12 +261,12 @@ export function PlansCombosTab() {
       </Card>
       {/* Category Management */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <CardTitle>Planos e Combos</CardTitle>
             <CardDescription>Gerencie categorias, planos e combos exibidos no site</CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={() => setShowCategorySettings(!showCategorySettings)}>
               <Settings2 className="w-4 h-4 mr-2" />Categorias
             </Button>
@@ -282,15 +282,15 @@ export function PlansCombosTab() {
             <h4 className="font-semibold mb-4">Gerenciar Categorias</h4>
             <div className="space-y-3">
               {categories.map((cat) => (
-                <div key={cat.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                <div key={cat.id} className="flex flex-wrap items-center gap-3 p-3 border rounded-lg">
                   <Switch checked={cat.active} onCheckedChange={(v) => toggleCategoryActive(cat.id, v)} />
                   <Input
                     value={editingCatNames[cat.id] || ""}
                     onChange={(e) => setEditingCatNames((p) => ({ ...p, [cat.id]: e.target.value }))}
                     onBlur={() => renameCat(cat.id)}
-                    className="max-w-[200px]"
+                    className="w-full sm:max-w-[200px]"
                   />
-                  <div className="flex items-center gap-2 ml-auto">
+                  <div className="flex items-center gap-2 sm:ml-auto">
                     <Label className="text-xs text-muted-foreground whitespace-nowrap">Aba padrão</Label>
                     <input
                       type="radio"
@@ -327,10 +327,10 @@ export function PlansCombosTab() {
                     <CollapsibleContent>
                       <div className="space-y-3 mt-2">
                         {catItems.map((item) => (
-                          <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
-                            <div className="flex-1">
+                          <div key={item.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 border rounded-lg">
+                            <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <h4 className="font-semibold">{item.name}</h4>
+                                <h4 className="font-semibold break-words">{item.name}</h4>
                                 {item.badge && (
                                   <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">{item.badge}</span>
                                 )}
@@ -341,16 +341,16 @@ export function PlansCombosTab() {
                                   <span className="text-xs bg-destructive/10 text-destructive px-2 py-1 rounded-full">Inativo</span>
                                 )}
                               </div>
-                              <p className="text-sm text-muted-foreground">{item.speed} Mega • {item.description}</p>
-                              {item.slogan && <p className="text-xs text-muted-foreground italic mt-1">"{item.slogan}"</p>}
+                              <p className="text-sm text-muted-foreground break-words">{item.speed} Mega • {item.description}</p>
+                              {item.slogan && <p className="text-xs text-muted-foreground italic mt-1 break-words">"{item.slogan}"</p>}
                             </div>
-                            <div className="text-right mr-4">
-                              <p className="font-bold text-lg">R$ {Number(item.price).toFixed(2)}</p>
+                            <div className="md:text-right md:mr-4 flex md:block items-baseline gap-2">
+                              <p className="font-bold text-lg whitespace-nowrap">R$ {Number(item.price).toFixed(2)}</p>
                               {item.original_price && (
-                                <p className="text-sm text-muted-foreground line-through">R$ {Number(item.original_price).toFixed(2)}</p>
+                                <p className="text-sm text-muted-foreground line-through whitespace-nowrap">R$ {Number(item.original_price).toFixed(2)}</p>
                               )}
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-shrink-0">
                               <PlanItemEditDialog item={item} categories={categories} onSave={fetchData} />
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
