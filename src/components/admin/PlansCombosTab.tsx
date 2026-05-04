@@ -261,12 +261,12 @@ export function PlansCombosTab() {
       </Card>
       {/* Category Management */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <CardTitle>Planos e Combos</CardTitle>
             <CardDescription>Gerencie categorias, planos e combos exibidos no site</CardDescription>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="outline" size="sm" onClick={() => setShowCategorySettings(!showCategorySettings)}>
               <Settings2 className="w-4 h-4 mr-2" />Categorias
             </Button>
