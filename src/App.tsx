@@ -18,6 +18,8 @@ import ConfigPage from "./pages/sales/ConfigPage";
 import DespesasPage from "./pages/sales/DespesasPage";
 import VendedoresPage from "./pages/sales/VendedoresPage";
 import Preview from "./pages/Preview";
+import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
+import TermosUso from "./pages/TermosUso";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ const App = () => (
           <Route path="/login" element={<Admin />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/preview" element={<Preview />} />
+          <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
+          <Route path="/termos-de-uso" element={<TermosUso />} />
           <Route path="/sales" element={<SalesLayout />}>
             <Route index element={<SalesDashboard />} />
             <Route path="vendas" element={<VendasPage />} />
