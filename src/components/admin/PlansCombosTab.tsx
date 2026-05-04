@@ -341,16 +341,16 @@ export function PlansCombosTab() {
                                   <span className="text-xs bg-destructive/10 text-destructive px-2 py-1 rounded-full">Inativo</span>
                                 )}
                               </div>
-                              <p className="text-sm text-muted-foreground">{item.speed} Mega • {item.description}</p>
-                              {item.slogan && <p className="text-xs text-muted-foreground italic mt-1">"{item.slogan}"</p>}
+                              <p className="text-sm text-muted-foreground break-words">{item.speed} Mega • {item.description}</p>
+                              {item.slogan && <p className="text-xs text-muted-foreground italic mt-1 break-words">"{item.slogan}"</p>}
                             </div>
-                            <div className="text-right mr-4">
-                              <p className="font-bold text-lg">R$ {Number(item.price).toFixed(2)}</p>
+                            <div className="md:text-right md:mr-4 flex md:block items-baseline gap-2">
+                              <p className="font-bold text-lg whitespace-nowrap">R$ {Number(item.price).toFixed(2)}</p>
                               {item.original_price && (
-                                <p className="text-sm text-muted-foreground line-through">R$ {Number(item.original_price).toFixed(2)}</p>
+                                <p className="text-sm text-muted-foreground line-through whitespace-nowrap">R$ {Number(item.original_price).toFixed(2)}</p>
                               )}
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-shrink-0">
                               <PlanItemEditDialog item={item} categories={categories} onSave={fetchData} />
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
