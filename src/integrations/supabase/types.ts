@@ -272,6 +272,42 @@ export type Database = {
         }
         Relationships: []
       }
+      lgpd_requests: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          mensagem: string
+          nome: string
+          status: string
+          telefone: string | null
+          tipo_solicitacao: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          mensagem: string
+          nome: string
+          status?: string
+          telefone?: string | null
+          tipo_solicitacao: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          mensagem?: string
+          nome?: string
+          status?: string
+          telefone?: string | null
+          tipo_solicitacao?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       meta_vendedor: {
         Row: {
           ano: number
