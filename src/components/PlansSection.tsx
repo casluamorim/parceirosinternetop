@@ -118,9 +118,11 @@ export function PlansSection() {
     if (el) {
       el.addEventListener("scroll", checkScroll, { passive: true });
       window.addEventListener("resize", checkScroll);
+      window.addEventListener("orientationchange", checkScroll);
       return () => {
         el.removeEventListener("scroll", checkScroll);
         window.removeEventListener("resize", checkScroll);
+        window.removeEventListener("orientationchange", checkScroll);
       };
     }
   }, [checkScroll]);
