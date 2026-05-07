@@ -434,6 +434,26 @@ export function PlansSection() {
               </div>
             </motion.div>
           </AnimatePresence>
+
+          {/* Dots indicator */}
+          {!loading && filteredItems.length > 1 && (
+            <div className="flex justify-center gap-2 mt-6" role="tablist" aria-label="Indicador de planos">
+              {filteredItems.map((_, i) => (
+                <button
+                  key={i}
+                  role="tab"
+                  aria-selected={i === activeIndex}
+                  aria-label={`Ir para plano ${i + 1}`}
+                  onClick={() => scrollToIndex(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === activeIndex
+                      ? "w-6 bg-primary"
+                      : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Additional Info */}
