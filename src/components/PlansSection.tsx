@@ -359,12 +359,15 @@ export function PlansSection() {
             >
               <div
                 ref={scrollRef}
-                className="flex gap-4 lg:gap-6 overflow-x-auto pt-6 pb-4 px-1 scrollbar-hide snap-x snap-proximity cursor-grab active:cursor-grabbing select-none"
-                style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem", scrollBehavior: "auto", overscrollBehaviorX: "contain" }}
+                className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pt-6 pb-4 px-1 scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none touch-pan-x"
+                style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem", scrollBehavior: "auto", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               >
                 {loading ? (
                   Array.from({ length: 4 }).map((_, index) => (
