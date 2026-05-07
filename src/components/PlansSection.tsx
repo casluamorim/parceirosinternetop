@@ -198,8 +198,43 @@ export function PlansSection() {
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
-    const cardWidth = 304;
+    const firstCard = el.querySelector<HTMLElement>("[data-plan-card]");
+    const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
+    const cardWidth = (firstCard?.offsetWidth ?? 280) + gap;
     el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+  };
+
+  // Touch swipe handlers
+  const touchStartX = useRef(0);
+  const touchScrollStart = useRef(0);
+  const touchLastX = useRef(0);
+  const touchLastT = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    stopMomentum();
+    const t = e.touches[0];
+    touchStartX.current = t.pageX;
+    touchScrollStart.current = el.scrollLeft;
+    touchLastX.current = t.pageX;
+    touchLastT.current = performance.now();
+    velocity.current = 0;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const t = e.touches[0];
+    const now = performance.now();
+    const dt = now - touchLastT.current;
+    if (dt > 0) velocity.current = ((t.pageX - touchLastX.current) / dt) * 16;
+    touchLastX.current = t.pageX;
+    touchLastT.current = now;
+  };
+
+  const handleTouchEnd = () => {
+    if (Math.abs(velocity.current) > 1) startMomentum();
   };
 
   const handleSubscribe = (plan: PlanItem) => {
