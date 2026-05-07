@@ -198,8 +198,43 @@ export function PlansSection() {
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
     if (!el) return;
-    const cardWidth = 304;
+    const firstCard = el.querySelector<HTMLElement>("[data-plan-card]");
+    const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
+    const cardWidth = (firstCard?.offsetWidth ?? 280) + gap;
     el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+  };
+
+  // Touch swipe handlers
+  const touchStartX = useRef(0);
+  const touchScrollStart = useRef(0);
+  const touchLastX = useRef(0);
+  const touchLastT = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    stopMomentum();
+    const t = e.touches[0];
+    touchStartX.current = t.pageX;
+    touchScrollStart.current = el.scrollLeft;
+    touchLastX.current = t.pageX;
+    touchLastT.current = performance.now();
+    velocity.current = 0;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const t = e.touches[0];
+    const now = performance.now();
+    const dt = now - touchLastT.current;
+    if (dt > 0) velocity.current = ((t.pageX - touchLastX.current) / dt) * 16;
+    touchLastX.current = t.pageX;
+    touchLastT.current = now;
+  };
+
+  const handleTouchEnd = () => {
+    if (Math.abs(velocity.current) > 1) startMomentum();
   };
 
   const handleSubscribe = (plan: PlanItem) => {
@@ -324,12 +359,15 @@ export function PlansSection() {
             >
               <div
                 ref={scrollRef}
-                className="flex gap-4 lg:gap-6 overflow-x-auto pt-6 pb-4 px-1 scrollbar-hide snap-x snap-proximity cursor-grab active:cursor-grabbing select-none"
-                style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem", scrollBehavior: "auto", overscrollBehaviorX: "contain" }}
+                className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pt-6 pb-4 px-1 scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none touch-pan-x"
+                style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem", scrollBehavior: "auto", overscrollBehaviorX: "contain", WebkitOverflowScrolling: "touch" }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               >
                 {loading ? (
                   Array.from({ length: 4 }).map((_, index) => (
@@ -356,7 +394,7 @@ export function PlansSection() {
                   </div>
                 ) : (
                   filteredItems.map((item, index) => (
-                    <div key={item.id} className="min-w-[280px] w-[280px] lg:min-w-[300px] lg:w-[300px] flex-shrink-0 snap-start">
+                    <div key={item.id} data-plan-card className="min-w-[260px] w-[85vw] max-w-[300px] sm:w-[280px] sm:min-w-[280px] lg:w-[300px] lg:min-w-[300px] flex-shrink-0 snap-center sm:snap-start">
                       <PlanItemCard
                         item={item}
                         categoryName={activeCategoryData?.name || ""}
