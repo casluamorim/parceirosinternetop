@@ -108,10 +108,25 @@ export function PlansSection() {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = 0;
     }
+    setActiveIndex(0);
     // Small delay to let DOM update before checking scroll
-    const t = setTimeout(checkScroll, 100);
+    const t = setTimeout(() => {
+      scrollToIndex(0, false);
+      checkScroll();
+    }, 100);
     return () => clearTimeout(t);
-  }, [activeCategory, filteredItems.length, checkScroll]);
+  }, [activeCategory, filteredItems.length, checkScroll, scrollToIndex]);
+
+  // Recenter active card on resize / orientation change
+  useEffect(() => {
+    const onResize = () => scrollToIndex(activeIndex, false);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, [activeIndex, scrollToIndex]);
 
   useEffect(() => {
     const el = scrollRef.current;
