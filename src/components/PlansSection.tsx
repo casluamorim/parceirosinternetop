@@ -72,6 +72,19 @@ export function PlansSection() {
     }
   }, []);
 
+  const scrollToIndex = useCallback((index: number, smooth = true) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cards = el.querySelectorAll<HTMLElement>("[data-plan-card]");
+    const card = cards[index];
+    if (!card) return;
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    const target = isMobile
+      ? card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2
+      : card.offsetLeft;
+    el.scrollTo({ left: Math.max(0, target), behavior: smooth ? "smooth" : "auto" });
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       const [catRes, itemRes] = await Promise.all([
