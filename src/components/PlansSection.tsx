@@ -394,7 +394,7 @@ export function PlansSection() {
                   </div>
                 ) : (
                   filteredItems.map((item, index) => (
-                    <div key={item.id} className="min-w-[280px] w-[280px] lg:min-w-[300px] lg:w-[300px] flex-shrink-0 snap-start">
+                    <div key={item.id} data-plan-card className="min-w-[260px] w-[85vw] max-w-[300px] sm:w-[280px] sm:min-w-[280px] lg:w-[300px] lg:min-w-[300px] flex-shrink-0 snap-center sm:snap-start">
                       <PlanItemCard
                         item={item}
                         categoryName={activeCategoryData?.name || ""}
