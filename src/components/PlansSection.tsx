@@ -324,8 +324,8 @@ export function PlansSection() {
             >
               <div
                 ref={scrollRef}
-                className="flex gap-4 lg:gap-6 overflow-x-auto pb-4 px-1 scrollbar-hide snap-x snap-mandatory cursor-grab active:cursor-grabbing select-none"
-                style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem" }}
+                className="flex gap-4 lg:gap-6 overflow-x-auto pt-6 pb-4 px-1 scrollbar-hide snap-x snap-proximity cursor-grab active:cursor-grabbing select-none"
+                style={{ scrollPaddingLeft: "0.25rem", scrollPaddingRight: "0.25rem", scrollBehavior: "auto", overscrollBehaviorX: "contain" }}
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
