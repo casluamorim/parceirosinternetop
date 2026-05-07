@@ -44,6 +44,7 @@ export function PlansSection() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const isDragging = useRef(false);
   const startX = useRef(0);
   const scrollLeftStart = useRef(0);
@@ -54,6 +55,34 @@ export function PlansSection() {
     if (!el) return;
     setCanScrollLeft(el.scrollLeft > 4);
     setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    const cards = el.querySelectorAll<HTMLElement>("[data-plan-card]");
+    if (cards.length > 0) {
+      const center = el.scrollLeft + el.clientWidth / 2;
+      let closest = 0;
+      let minDist = Infinity;
+      cards.forEach((c, i) => {
+        const cardCenter = c.offsetLeft + c.offsetWidth / 2;
+        const dist = Math.abs(cardCenter - center);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = i;
+        }
+      });
+      setActiveIndex(closest);
+    }
+  }, []);
+
+  const scrollToIndex = useCallback((index: number, smooth = true) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cards = el.querySelectorAll<HTMLElement>("[data-plan-card]");
+    const card = cards[index];
+    if (!card) return;
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    const target = isMobile
+      ? card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2
+      : card.offsetLeft;
+    el.scrollTo({ left: Math.max(0, target), behavior: smooth ? "smooth" : "auto" });
   }, []);
 
   useEffect(() => {
@@ -92,19 +121,36 @@ export function PlansSection() {
     if (scrollRef.current) {
       scrollRef.current.scrollLeft = 0;
     }
+    setActiveIndex(0);
     // Small delay to let DOM update before checking scroll
-    const t = setTimeout(checkScroll, 100);
+    const t = setTimeout(() => {
+      scrollToIndex(0, false);
+      checkScroll();
+    }, 100);
     return () => clearTimeout(t);
-  }, [activeCategory, filteredItems.length, checkScroll]);
+  }, [activeCategory, filteredItems.length, checkScroll, scrollToIndex]);
+
+  // Recenter active card on resize / orientation change
+  useEffect(() => {
+    const onResize = () => scrollToIndex(activeIndex, false);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, [activeIndex, scrollToIndex]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (el) {
       el.addEventListener("scroll", checkScroll, { passive: true });
       window.addEventListener("resize", checkScroll);
+      window.addEventListener("orientationchange", checkScroll);
       return () => {
         el.removeEventListener("scroll", checkScroll);
         window.removeEventListener("resize", checkScroll);
+        window.removeEventListener("orientationchange", checkScroll);
       };
     }
   }, [checkScroll]);
@@ -195,13 +241,11 @@ export function PlansSection() {
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
+
+
   const scroll = (dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const firstCard = el.querySelector<HTMLElement>("[data-plan-card]");
-    const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
-    const cardWidth = (firstCard?.offsetWidth ?? 280) + gap;
-    el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+    const next = dir === "left" ? Math.max(0, activeIndex - 1) : activeIndex + 1;
+    scrollToIndex(next);
   };
 
   // Touch swipe handlers
@@ -407,6 +451,26 @@ export function PlansSection() {
               </div>
             </motion.div>
           </AnimatePresence>
+
+          {/* Dots indicator */}
+          {!loading && filteredItems.length > 1 && (
+            <div className="flex justify-center gap-2 mt-6" role="tablist" aria-label="Indicador de planos">
+              {filteredItems.map((_, i) => (
+                <button
+                  key={i}
+                  role="tab"
+                  aria-selected={i === activeIndex}
+                  aria-label={`Ir para plano ${i + 1}`}
+                  onClick={() => scrollToIndex(i)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === activeIndex
+                      ? "w-6 bg-primary"
+                      : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Additional Info */}
