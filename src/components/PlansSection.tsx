@@ -109,13 +109,44 @@ export function PlansSection() {
     }
   }, [checkScroll]);
 
+  const lastX = useRef(0);
+  const lastT = useRef(0);
+  const velocity = useRef(0);
+  const momentumRAF = useRef<number | null>(null);
+
+  const stopMomentum = () => {
+    if (momentumRAF.current !== null) {
+      cancelAnimationFrame(momentumRAF.current);
+      momentumRAF.current = null;
+    }
+  };
+
+  const startMomentum = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const step = () => {
+      if (Math.abs(velocity.current) < 0.5) {
+        momentumRAF.current = null;
+        return;
+      }
+      el.scrollLeft -= velocity.current;
+      velocity.current *= 0.94;
+      momentumRAF.current = requestAnimationFrame(step);
+    };
+    momentumRAF.current = requestAnimationFrame(step);
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
+    stopMomentum();
     isDragging.current = true;
     hasDragged.current = false;
     startX.current = e.pageX - el.offsetLeft;
     scrollLeftStart.current = el.scrollLeft;
+    lastX.current = e.pageX;
+    lastT.current = performance.now();
+    velocity.current = 0;
     el.style.cursor = "grabbing";
     el.style.userSelect = "none";
   };
@@ -126,19 +157,43 @@ export function PlansSection() {
     if (!el) return;
     e.preventDefault();
     const x = e.pageX - el.offsetLeft;
-    const walk = x - startX.current;
+    const walk = (x - startX.current) * 1.5;
     if (Math.abs(walk) > 5) hasDragged.current = true;
     el.scrollLeft = scrollLeftStart.current - walk;
+
+    const now = performance.now();
+    const dt = now - lastT.current;
+    if (dt > 0) {
+      velocity.current = (e.pageX - lastX.current) / dt * 16;
+    }
+    lastX.current = e.pageX;
+    lastT.current = now;
   };
 
   const handleMouseUp = () => {
+    if (!isDragging.current) return;
     isDragging.current = false;
     const el = scrollRef.current;
     if (el) {
       el.style.cursor = "grab";
       el.style.userSelect = "";
     }
+    if (Math.abs(velocity.current) > 1) startMomentum();
   };
+
+  // Wheel: convert vertical scroll to horizontal inside carousel
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        el.scrollLeft += e.deltaY;
+        e.preventDefault();
+      }
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
