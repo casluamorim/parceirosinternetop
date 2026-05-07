@@ -213,13 +213,22 @@ export function PlansSection() {
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
-  const scroll = (dir: "left" | "right") => {
+  const scrollToIndex = useCallback((index: number, smooth = true) => {
     const el = scrollRef.current;
     if (!el) return;
-    const firstCard = el.querySelector<HTMLElement>("[data-plan-card]");
-    const gap = parseFloat(getComputedStyle(el).columnGap || "16") || 16;
-    const cardWidth = (firstCard?.offsetWidth ?? 280) + gap;
-    el.scrollBy({ left: dir === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+    const cards = el.querySelectorAll<HTMLElement>("[data-plan-card]");
+    const card = cards[index];
+    if (!card) return;
+    const isMobile = window.matchMedia("(max-width: 639px)").matches;
+    const target = isMobile
+      ? card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2
+      : card.offsetLeft;
+    el.scrollTo({ left: Math.max(0, target), behavior: smooth ? "smooth" : "auto" });
+  }, []);
+
+  const scroll = (dir: "left" | "right") => {
+    const next = dir === "left" ? Math.max(0, activeIndex - 1) : activeIndex + 1;
+    scrollToIndex(next);
   };
 
   // Touch swipe handlers
