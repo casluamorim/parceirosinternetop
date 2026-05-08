@@ -42,8 +42,19 @@ export default function ClientesPage() {
   const handleSubmit = async () => {
     const vid = canManage ? form.vendedor_id : salesUser!.id;
     if (!form.nome || !vid) { toast({ title: "Preencha nome e vendedor", variant: "destructive" }); return; }
-    const { error } = await sq("clientes").insert({ ...form, vendedor_id: vid, mes, ano });
+    const { data: inserted, error } = await sq("clientes").insert({ ...form, vendedor_id: vid, mes, ano }).select().maybeSingle();
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    const plano = planos.find((p) => p.id === form.plano_id);
+    const vendedor = vendedores.find((v) => v.id === vid) ?? { name: salesUser?.name };
+    const { enqueueGesprov } = await import("@/lib/gesprov");
+    enqueueGesprov("cliente", {
+      origem: "vendedor_painel",
+      data_venda: new Date().toISOString(),
+      cliente: { nome: form.nome, telefone: form.telefone, email: form.email, endereco: form.endereco },
+      plano: plano ? { id: plano.id, nome: plano.name, velocidade: plano.speed } : null,
+      vendedor: { id: vid, nome: vendedor?.name },
+      fidelidade_meses: 12,
+    }, { entityId: inserted?.id, dedupeKey: inserted?.id ? `cliente:${inserted.id}` : undefined });
     toast({ title: "Cliente cadastrado!" });
     setDialogOpen(false);
     setForm({ nome: "", telefone: "", email: "", endereco: "", vendedor_id: "", plano_id: "" });
