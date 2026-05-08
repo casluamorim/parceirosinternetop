@@ -133,6 +133,11 @@ export default function Admin() {
              <LgpdRequestsTab />
           </TabsContent>
 
+           {/* Integrações Tab */}
+           <TabsContent value="integracoes">
+             <IntegracoesTab />
+          </TabsContent>
+
            {/* Settings Tab */}
            <TabsContent value="settings">
              <SettingsTab />
