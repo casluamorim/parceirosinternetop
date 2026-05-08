@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X, MessageCircle, Loader2, Check, Copy } from "lucide-react";
 import { siteConfig } from "@/lib/config";
+import { enqueueGesprov } from "@/lib/gesprov";
 import type { PlanItem } from "./PlansSection";
 
 interface ContractModalProps {
