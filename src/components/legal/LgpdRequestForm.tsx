@@ -67,6 +67,14 @@ export function LgpdRequestForm() {
       toast({ title: "Erro ao enviar", description: error.message, variant: "destructive" });
       return;
     }
+    enqueueGesprov("lead_contato", {
+      origem: "lgpd",
+      nome: parsed.data.nome,
+      email: parsed.data.email,
+      telefone: parsed.data.telefone || null,
+      tipo: parsed.data.tipo_solicitacao,
+      mensagem: parsed.data.mensagem,
+    });
     setDone(true);
     toast({ title: "Solicitação enviada", description: "Retornaremos em até 15 dias úteis." });
   };
