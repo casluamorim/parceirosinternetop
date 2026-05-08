@@ -97,12 +97,13 @@ export default function Admin() {
       <main className="container py-8">
         <Tabs defaultValue="plans-combos" className="space-y-6">
           <div className="w-full overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-max sm:w-full sm:grid sm:grid-cols-2 lg:grid-cols-6 gap-1">
+            <TabsList className="inline-flex w-max sm:w-full sm:grid sm:grid-cols-2 lg:grid-cols-7 gap-1">
               <TabsTrigger value="plans-combos" className="whitespace-nowrap">Planos e Combos</TabsTrigger>
               <TabsTrigger value="companies" className="whitespace-nowrap">Empresas</TabsTrigger>
               <TabsTrigger value="coverage" className="whitespace-nowrap">Cobertura</TabsTrigger>
               <TabsTrigger value="testimonials" className="whitespace-nowrap">Depoimentos</TabsTrigger>
               <TabsTrigger value="lgpd" className="whitespace-nowrap">LGPD</TabsTrigger>
+              <TabsTrigger value="integracoes" className="whitespace-nowrap">Integrações</TabsTrigger>
               <TabsTrigger value="settings" className="whitespace-nowrap">Configurações</TabsTrigger>
             </TabsList>
           </div>
