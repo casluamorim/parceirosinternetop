@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
+import { enqueueGesprov } from "@/lib/gesprov";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 
