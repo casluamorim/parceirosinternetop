@@ -248,6 +248,146 @@ export type Database = {
         }
         Relationships: []
       }
+      gesprov_config: {
+        Row: {
+          api_url: string | null
+          auth_type: string
+          created_at: string
+          enabled: boolean
+          extra_headers: Json
+          id: string
+          last_error: string | null
+          last_status: string | null
+          last_sync_at: string | null
+          singleton: boolean
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          api_url?: string | null
+          auth_type?: string
+          created_at?: string
+          enabled?: boolean
+          extra_headers?: Json
+          id?: string
+          last_error?: string | null
+          last_status?: string | null
+          last_sync_at?: string | null
+          singleton?: boolean
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          api_url?: string | null
+          auth_type?: string
+          created_at?: string
+          enabled?: boolean
+          extra_headers?: Json
+          id?: string
+          last_error?: string | null
+          last_status?: string | null
+          last_sync_at?: string | null
+          singleton?: boolean
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      gesprov_logs: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          http_status: number | null
+          id: string
+          message: string | null
+          payload: Json | null
+          queue_id: string | null
+          response: Json | null
+          status: string
+          tipo: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          http_status?: number | null
+          id?: string
+          message?: string | null
+          payload?: Json | null
+          queue_id?: string | null
+          response?: Json | null
+          status: string
+          tipo: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          http_status?: number | null
+          id?: string
+          message?: string | null
+          payload?: Json | null
+          queue_id?: string | null
+          response?: Json | null
+          status?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gesprov_logs_queue_id_fkey"
+            columns: ["queue_id"]
+            isOneToOne: false
+            referencedRelation: "gesprov_queue"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gesprov_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          dedupe_key: string | null
+          entity_id: string | null
+          gesprov_id: string | null
+          id: string
+          last_error: string | null
+          max_attempts: number
+          next_retry_at: string
+          payload: Json
+          status: string
+          tipo: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          dedupe_key?: string | null
+          entity_id?: string | null
+          gesprov_id?: string | null
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          next_retry_at?: string
+          payload: Json
+          status?: string
+          tipo: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          dedupe_key?: string | null
+          entity_id?: string | null
+          gesprov_id?: string | null
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          next_retry_at?: string
+          payload?: Json
+          status?: string
+          tipo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investimento_mensal: {
         Row: {
           ano: number
