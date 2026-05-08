@@ -51,13 +51,26 @@ export function ContractModal({ isOpen, onClose, planItem }: ContractModalProps)
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const protocol = generateProtocol();
     setProtocolNumber(protocol);
-    console.log("Contract data:", { plan: planItem, customer: formData, protocol });
+    enqueueGesprov("venda", {
+      protocolo: protocol,
+      origem: "site_formulario",
+      data_venda: new Date().toISOString(),
+      plano: { id: planItem?.id, nome: planItem?.name, velocidade: planItem?.speed, valor: planItem?.price },
+      cliente: { ...formData },
+      fidelidade_meses: 12,
+    }, { dedupeKey: `contrato:${protocol}` });
     setIsSubmitting(false);
     setIsSuccess(true);
   };
 
   const handleWhatsApp = () => {
     if (!planItem) return;
+    enqueueGesprov("lead_whatsapp", {
+      origem: "site_whatsapp",
+      data: new Date().toISOString(),
+      plano: { id: planItem.id, nome: planItem.name, velocidade: planItem.speed, valor: planItem.price },
+      cliente: { ...formData },
+    });
     const message = encodeURIComponent(
       `Olá! Gostaria de contratar o plano ${planItem.name} de ${planItem.speed} Mega.
 
