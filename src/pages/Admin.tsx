@@ -13,6 +13,7 @@ import { PlansCombosTab } from "@/components/admin/PlansCombosTab";
  import { SettingsTab } from "@/components/admin/SettingsTab";
  import { CoverageTab } from "@/components/admin/CoverageTab";
  import { LgpdRequestsTab } from "@/components/admin/LgpdRequestsTab";
+ import { IntegracoesTab } from "@/components/admin/IntegracoesTab";
 
 export default function Admin() {
   const { user, isAdmin, loading, signOut } = useAuth();
