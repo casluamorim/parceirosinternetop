@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Trash2, RefreshCw, Settings2 } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Trash2, RefreshCw, Settings2, Copy, Search, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PlanItemEditDialog } from "./PlanItemEditDialog";
 import { PlanEditDialog } from "./PlanEditDialog";
 import { BusinessPlanEditDialog } from "./BusinessPlanEditDialog";
+import { PlanBulkDialog } from "./PlanBulkDialog";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
