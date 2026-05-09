@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Pencil, Plus, X, Save } from "lucide-react";
+import { Pencil, Plus, X, Save, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,7 @@ export function PlanItemEditDialog({ item, isNew = false, categories, defaultCat
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const [newFeature, setNewFeature] = useState("");
+  const [featuresText, setFeaturesText] = useState((item?.features ?? []).join(", "));
 
   const [formData, setFormData] = useState({
     category_id: item?.category_id ?? defaultCategoryId ?? "",
@@ -83,8 +83,14 @@ export function PlanItemEditDialog({ item, isNew = false, categories, defaultCat
         terms_url: item.terms_url ?? "",
         active: item.active,
       });
+      setFeaturesText((item.features ?? []).join(", "));
     }
   }, [open, item]);
+
+  const parsedFeatures = featuresText
+    .split(/[,\n]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
 
   const handleSave = async () => {
     if (!formData.name || !formData.speed || !formData.price || !formData.category_id) {
@@ -101,7 +107,7 @@ export function PlanItemEditDialog({ item, isNew = false, categories, defaultCat
         original_price: formData.original_price,
         description: formData.description || null,
         slogan: formData.slogan || null,
-        features: formData.features,
+        features: parsedFeatures,
         badge: formData.badge || null,
         popular: formData.popular,
         display_order: formData.display_order,
@@ -128,15 +134,9 @@ export function PlanItemEditDialog({ item, isNew = false, categories, defaultCat
     }
   };
 
-  const addFeature = () => {
-    if (newFeature.trim()) {
-      setFormData((prev) => ({ ...prev, features: [...prev.features, newFeature.trim()] }));
-      setNewFeature("");
-    }
-  };
-
   const removeFeature = (index: number) => {
-    setFormData((prev) => ({ ...prev, features: prev.features.filter((_, i) => i !== index) }));
+    const next = parsedFeatures.filter((_, i) => i !== index);
+    setFeaturesText(next.join(", "));
   };
 
   return (
@@ -224,18 +224,26 @@ export function PlanItemEditDialog({ item, isNew = false, categories, defaultCat
           {/* Features */}
           <div className="space-y-2">
             <Label>Benefícios</Label>
-            <div className="flex gap-2">
-              <Input value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Adicionar benefício..." onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addFeature())} />
-              <Button type="button" variant="outline" onClick={addFeature}><Plus className="w-4 h-4" /></Button>
-            </div>
-            <div className="space-y-1 mt-2">
-              {formData.features.map((f, i) => (
-                <div key={i} className="flex items-center gap-2 p-2 bg-muted rounded-md">
-                  <span className="flex-1 text-sm">{f}</span>
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removeFeature(i)}><X className="w-4 h-4" /></Button>
-                </div>
-              ))}
-            </div>
+            <Textarea
+              value={featuresText}
+              onChange={(e) => setFeaturesText(e.target.value)}
+              placeholder="Wi-Fi incluso, Deezer Premium, HBO Max, Suporte prioritário"
+              rows={3}
+            />
+            <p className="text-xs text-muted-foreground">Separe os recursos por vírgula. Eles serão exibidos como uma lista.</p>
+            {parsedFeatures.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {parsedFeatures.map((f, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
+                    <Check className="w-3 h-3" />
+                    {f}
+                    <button type="button" onClick={() => removeFeature(i)} className="hover:opacity-70">
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* WhatsApp message */}
