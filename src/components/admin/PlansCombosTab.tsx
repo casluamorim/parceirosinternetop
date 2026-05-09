@@ -101,6 +101,8 @@ export function PlansCombosTab() {
   const [editingCatNames, setEditingCatNames] = useState<Record<string, string>>({});
   const [promo, setPromo] = useState<PromoSettings>(defaultPromo);
   const [savingPromo, setSavingPromo] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filterCat, setFilterCat] = useState<string>("all");
   const { toast } = useToast();
 
   const fetchData = async () => {
@@ -171,6 +173,26 @@ export function PlansCombosTab() {
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
     else {
       toast({ title: "Sucesso", description: "Item excluído!" });
+      fetchData();
+    }
+  };
+
+  const toggleItemActive = async (item: PlanItemData) => {
+    const { error } = await supabase.from("plan_items").update({ active: !item.active }).eq("id", item.id);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: !item.active ? "Plano ativado" : "Plano desativado" });
+      fetchData();
+    }
+  };
+
+  const duplicateItem = async (item: PlanItemData) => {
+    const { id, ...rest } = item;
+    const payload = { ...rest, name: `${item.name} (Cópia)`, popular: false };
+    const { error } = await supabase.from("plan_items").insert(payload);
+    if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
+    else {
+      toast({ title: "Sucesso", description: "Plano duplicado!" });
       fetchData();
     }
   };
