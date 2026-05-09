@@ -296,6 +296,17 @@ export function PlansCombosTab() {
             <Button variant="outline" size="sm" onClick={fetchData} disabled={loading}>
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </Button>
+            <PlanBulkDialog
+              categories={categories}
+              onSave={fetchData}
+              initialTab="import"
+              trigger={
+                <Button variant="outline" size="sm">
+                  <Upload className="w-4 h-4 mr-2" />Importar Planos
+                </Button>
+              }
+            />
+            <PlanBulkDialog categories={categories} onSave={fetchData} initialTab="quick" />
             <PlanItemEditDialog isNew categories={categories} onSave={fetchData} />
           </div>
         </CardHeader>
@@ -333,12 +344,38 @@ export function PlansCombosTab() {
         )}
 
         <CardContent>
+          {/* Search & filter */}
+          <div className="flex flex-col sm:flex-row gap-2 mb-4">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar plano por nome..."
+                className="pl-9"
+              />
+            </div>
+            <Select value={filterCat} onValueChange={setFilterCat}>
+              <SelectTrigger className="sm:max-w-[220px]"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas as categorias</SelectItem>
+                {categories.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           {loading ? (
             <div className="text-center py-8 text-muted-foreground">Carregando...</div>
           ) : (
             <div className="space-y-6">
               {categories.map((cat) => {
-                const catItems = items.filter((i) => i.category_id === cat.id);
+                if (filterCat !== "all" && filterCat !== cat.id) return null;
+                const term = search.trim().toLowerCase();
+                const catItems = items
+                  .filter((i) => i.category_id === cat.id)
+                  .filter((i) => !term || i.name.toLowerCase().includes(term) || (i.description ?? "").toLowerCase().includes(term));
                 if (catItems.length === 0) return null;
                 return (
                   <Collapsible key={cat.id} defaultOpen>
@@ -373,7 +410,13 @@ export function PlansCombosTab() {
                                 <p className="text-sm text-muted-foreground line-through whitespace-nowrap">R$ {Number(item.original_price).toFixed(2)}</p>
                               )}
                             </div>
-                            <div className="flex gap-2 flex-shrink-0">
+                            <div className="flex gap-2 flex-shrink-0 items-center">
+                              <div className="flex items-center gap-1 mr-1" title={item.active ? "Desativar" : "Ativar"}>
+                                <Switch checked={item.active} onCheckedChange={() => toggleItemActive(item)} />
+                              </div>
+                              <Button variant="outline" size="sm" onClick={() => duplicateItem(item)} title="Duplicar">
+                                <Copy className="w-4 h-4" />
+                              </Button>
                               <PlanItemEditDialog item={item} categories={categories} onSave={fetchData} />
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
