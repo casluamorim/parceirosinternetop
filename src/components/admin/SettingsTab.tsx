@@ -89,7 +89,8 @@ export function SettingsTab() {
          saveSetting("promo_discount_text", settings.promo_discount_text),
          saveSetting("company_phone", settings.company_phone),
          saveSetting("company_whatsapp", settings.company_whatsapp),
-         saveSetting("company_email", settings.company_email),
+        saveSetting("company_email", settings.company_email),
+        saveSetting("company_logo_url", settings.company_logo_url),
        ]);
  
        toast({ title: "Sucesso", description: "Configurações salvas!" });
