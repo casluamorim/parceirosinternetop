@@ -100,15 +100,105 @@ export function SettingsTab() {
        setSaving(false);
      }
    };
- 
-   if (loading) {
-     return (
-       <div className="text-center py-8 text-muted-foreground">Carregando...</div>
-     );
-   }
- 
-   return (
-     <div className="space-y-6">
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Erro", description: "Selecione uma imagem.", variant: "destructive" });
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const ext = file.name.split(".").pop() || "png";
+      const path = `logo-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("site-assets")
+        .upload(path, file, { upsert: true, cacheControl: "3600" });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from("site-assets").getPublicUrl(path);
+      const url = data.publicUrl;
+      await saveSetting("company_logo_url", url);
+      setSettings((prev) => ({ ...prev, company_logo_url: url }));
+      toast({ title: "Sucesso", description: "Logo atualizada!" });
+    } catch (err: any) {
+      toast({ title: "Erro", description: err.message, variant: "destructive" });
+    } finally {
+      setUploadingLogo(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      await saveSetting("company_logo_url", "");
+      setSettings((prev) => ({ ...prev, company_logo_url: "" }));
+      toast({ title: "Logo removida" });
+    } catch (err: any) {
+      toast({ title: "Erro", description: err.message, variant: "destructive" });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Logo Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Logo da Empresa</CardTitle>
+          <CardDescription>Envie a logo que aparecerá no cabeçalho do site</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="w-24 h-24 rounded-xl border border-border bg-muted flex items-center justify-center overflow-hidden">
+              {settings.company_logo_url ? (
+                <img src={settings.company_logo_url} alt="Logo" className="w-full h-full object-contain" />
+              ) : (
+                <span className="text-xs text-muted-foreground text-center px-2">Sem logo</span>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingLogo}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {uploadingLogo ? "Enviando..." : "Enviar logo"}
+              </Button>
+              {settings.company_logo_url && (
+                <Button variant="ghost" size="sm" onClick={handleRemoveLogo}>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Remover
+                </Button>
+              )}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Ou cole a URL da logo</Label>
+            <Input
+              value={settings.company_logo_url}
+              onChange={(e) => setSettings((prev) => ({ ...prev, company_logo_url: e.target.value }))}
+              placeholder="https://..."
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+
        {/* Promo Settings */}
        <Card>
          <CardHeader className="flex flex-row items-center justify-between">
