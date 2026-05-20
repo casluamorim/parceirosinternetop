@@ -18,6 +18,7 @@ export function Header() {
   const [promoActive, setPromoActive] = useState(siteConfig.promo.active);
   const [promoBannerText, setPromoBannerText] = useState(siteConfig.promo.bannerText);
   const [promoBannerCta, setPromoBannerCta] = useState(siteConfig.promo.bannerCta);
+  const [logoUrl, setLogoUrl] = useState<string>("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +38,18 @@ export function Header() {
           if (typeof val.active === "boolean") setPromoActive(val.active);
           if (typeof val.bannerText === "string") setPromoBannerText(val.bannerText);
           if (typeof val.bannerCta === "string") setPromoBannerCta(val.bannerCta);
+        }
+      });
+
+    // Fetch logo from DB
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "company_logo_url")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.value && typeof data.value === "string") {
+          setLogoUrl(data.value);
         }
       });
 
@@ -88,18 +101,25 @@ export function Header() {
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <a href="#inicio" className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
-                <Wifi className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-display font-bold text-lg leading-tight text-foreground">
-                  {siteConfig.company.shortName}
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
-                  Internet
-                </span>
-              </div>
+              {logoUrl ? (
+                <img src={logoUrl} alt={siteConfig.company.name} className="h-10 lg:h-12 w-auto object-contain" />
+              ) : (
+                <>
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
+                    <Wifi className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-display font-bold text-lg leading-tight text-foreground">
+                      {siteConfig.company.shortName}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                      Internet
+                    </span>
+                  </div>
+                </>
+              )}
             </a>
+
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-8">

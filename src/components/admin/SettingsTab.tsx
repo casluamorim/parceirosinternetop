@@ -1,39 +1,43 @@
- import { useState, useEffect } from "react";
- import { Save, RefreshCw } from "lucide-react";
- import { Button } from "@/components/ui/button";
- import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
- import { Input } from "@/components/ui/input";
- import { Label } from "@/components/ui/label";
- import { Switch } from "@/components/ui/switch";
- import { useToast } from "@/hooks/use-toast";
- import { supabase } from "@/integrations/supabase/client";
- import { siteConfig } from "@/lib/config";
- 
- interface SiteSettings {
-   promo_active: boolean;
-   promo_banner_text: string;
-   promo_discount: string;
-   promo_discount_text: string;
-   company_phone: string;
-   company_whatsapp: string;
-   company_email: string;
- }
- 
- const defaultSettings: SiteSettings = {
-   promo_active: true,
-   promo_banner_text: siteConfig.promo.bannerText,
-   promo_discount: siteConfig.promo.discount,
-   promo_discount_text: siteConfig.promo.discountText,
-   company_phone: siteConfig.contact.phone,
-   company_whatsapp: siteConfig.contact.whatsappDisplay,
-   company_email: siteConfig.contact.email,
- };
- 
- export function SettingsTab() {
-   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
-   const [loading, setLoading] = useState(true);
-   const [saving, setSaving] = useState(false);
-   const { toast } = useToast();
+import { useState, useEffect, useRef } from "react";
+import { Save, RefreshCw, Upload, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { siteConfig } from "@/lib/config";
+
+interface SiteSettings {
+  promo_active: boolean;
+  promo_banner_text: string;
+  promo_discount: string;
+  promo_discount_text: string;
+  company_phone: string;
+  company_whatsapp: string;
+  company_email: string;
+  company_logo_url: string;
+}
+
+const defaultSettings: SiteSettings = {
+  promo_active: true,
+  promo_banner_text: siteConfig.promo.bannerText,
+  promo_discount: siteConfig.promo.discount,
+  promo_discount_text: siteConfig.promo.discountText,
+  company_phone: siteConfig.contact.phone,
+  company_whatsapp: siteConfig.contact.whatsappDisplay,
+  company_email: siteConfig.contact.email,
+  company_logo_url: "",
+};
+
+export function SettingsTab() {
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
  
    const fetchSettings = async () => {
      setLoading(true);
@@ -56,7 +60,8 @@
          promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
          company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
          company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
-         company_email: settingsMap.company_email ?? defaultSettings.company_email,
+        company_email: settingsMap.company_email ?? defaultSettings.company_email,
+        company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
        });
      }
      setLoading(false);
@@ -84,7 +89,8 @@
          saveSetting("promo_discount_text", settings.promo_discount_text),
          saveSetting("company_phone", settings.company_phone),
          saveSetting("company_whatsapp", settings.company_whatsapp),
-         saveSetting("company_email", settings.company_email),
+        saveSetting("company_email", settings.company_email),
+        saveSetting("company_logo_url", settings.company_logo_url),
        ]);
  
        toast({ title: "Sucesso", description: "Configurações salvas!" });
@@ -94,15 +100,105 @@
        setSaving(false);
      }
    };
- 
-   if (loading) {
-     return (
-       <div className="text-center py-8 text-muted-foreground">Carregando...</div>
-     );
-   }
- 
-   return (
-     <div className="space-y-6">
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Erro", description: "Selecione uma imagem.", variant: "destructive" });
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const ext = file.name.split(".").pop() || "png";
+      const path = `logo-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("site-assets")
+        .upload(path, file, { upsert: true, cacheControl: "3600" });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from("site-assets").getPublicUrl(path);
+      const url = data.publicUrl;
+      await saveSetting("company_logo_url", url);
+      setSettings((prev) => ({ ...prev, company_logo_url: url }));
+      toast({ title: "Sucesso", description: "Logo atualizada!" });
+    } catch (err: any) {
+      toast({ title: "Erro", description: err.message, variant: "destructive" });
+    } finally {
+      setUploadingLogo(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    try {
+      await saveSetting("company_logo_url", "");
+      setSettings((prev) => ({ ...prev, company_logo_url: "" }));
+      toast({ title: "Logo removida" });
+    } catch (err: any) {
+      toast({ title: "Erro", description: err.message, variant: "destructive" });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-8 text-muted-foreground">Carregando...</div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Logo Settings */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Logo da Empresa</CardTitle>
+          <CardDescription>Envie a logo que aparecerá no cabeçalho do site</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="w-24 h-24 rounded-xl border border-border bg-muted flex items-center justify-center overflow-hidden">
+              {settings.company_logo_url ? (
+                <img src={settings.company_logo_url} alt="Logo" className="w-full h-full object-contain" />
+              ) : (
+                <span className="text-xs text-muted-foreground text-center px-2">Sem logo</span>
+              )}
+            </div>
+            <div className="flex flex-col gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingLogo}
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                {uploadingLogo ? "Enviando..." : "Enviar logo"}
+              </Button>
+              {settings.company_logo_url && (
+                <Button variant="ghost" size="sm" onClick={handleRemoveLogo}>
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Remover
+                </Button>
+              )}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Ou cole a URL da logo</Label>
+            <Input
+              value={settings.company_logo_url}
+              onChange={(e) => setSettings((prev) => ({ ...prev, company_logo_url: e.target.value }))}
+              placeholder="https://..."
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+
        {/* Promo Settings */}
        <Card>
          <CardHeader className="flex flex-row items-center justify-between">
