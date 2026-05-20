@@ -60,7 +60,8 @@ export function SettingsTab() {
          promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
          company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
          company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
-         company_email: settingsMap.company_email ?? defaultSettings.company_email,
+        company_email: settingsMap.company_email ?? defaultSettings.company_email,
+        company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
        });
      }
      setLoading(false);
