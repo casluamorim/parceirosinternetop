@@ -1,39 +1,43 @@
- import { useState, useEffect } from "react";
- import { Save, RefreshCw } from "lucide-react";
- import { Button } from "@/components/ui/button";
- import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
- import { Input } from "@/components/ui/input";
- import { Label } from "@/components/ui/label";
- import { Switch } from "@/components/ui/switch";
- import { useToast } from "@/hooks/use-toast";
- import { supabase } from "@/integrations/supabase/client";
- import { siteConfig } from "@/lib/config";
- 
- interface SiteSettings {
-   promo_active: boolean;
-   promo_banner_text: string;
-   promo_discount: string;
-   promo_discount_text: string;
-   company_phone: string;
-   company_whatsapp: string;
-   company_email: string;
- }
- 
- const defaultSettings: SiteSettings = {
-   promo_active: true,
-   promo_banner_text: siteConfig.promo.bannerText,
-   promo_discount: siteConfig.promo.discount,
-   promo_discount_text: siteConfig.promo.discountText,
-   company_phone: siteConfig.contact.phone,
-   company_whatsapp: siteConfig.contact.whatsappDisplay,
-   company_email: siteConfig.contact.email,
- };
- 
- export function SettingsTab() {
-   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
-   const [loading, setLoading] = useState(true);
-   const [saving, setSaving] = useState(false);
-   const { toast } = useToast();
+import { useState, useEffect, useRef } from "react";
+import { Save, RefreshCw, Upload, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { siteConfig } from "@/lib/config";
+
+interface SiteSettings {
+  promo_active: boolean;
+  promo_banner_text: string;
+  promo_discount: string;
+  promo_discount_text: string;
+  company_phone: string;
+  company_whatsapp: string;
+  company_email: string;
+  company_logo_url: string;
+}
+
+const defaultSettings: SiteSettings = {
+  promo_active: true,
+  promo_banner_text: siteConfig.promo.bannerText,
+  promo_discount: siteConfig.promo.discount,
+  promo_discount_text: siteConfig.promo.discountText,
+  company_phone: siteConfig.contact.phone,
+  company_whatsapp: siteConfig.contact.whatsappDisplay,
+  company_email: siteConfig.contact.email,
+  company_logo_url: "",
+};
+
+export function SettingsTab() {
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
  
    const fetchSettings = async () => {
      setLoading(true);
