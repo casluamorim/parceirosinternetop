@@ -18,6 +18,7 @@ export function Header() {
   const [promoActive, setPromoActive] = useState(siteConfig.promo.active);
   const [promoBannerText, setPromoBannerText] = useState(siteConfig.promo.bannerText);
   const [promoBannerCta, setPromoBannerCta] = useState(siteConfig.promo.bannerCta);
+  const [logoUrl, setLogoUrl] = useState<string>("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -37,6 +38,18 @@ export function Header() {
           if (typeof val.active === "boolean") setPromoActive(val.active);
           if (typeof val.bannerText === "string") setPromoBannerText(val.bannerText);
           if (typeof val.bannerCta === "string") setPromoBannerCta(val.bannerCta);
+        }
+      });
+
+    // Fetch logo from DB
+    supabase
+      .from("site_settings")
+      .select("value")
+      .eq("key", "company_logo_url")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.value && typeof data.value === "string") {
+          setLogoUrl(data.value);
         }
       });
 
