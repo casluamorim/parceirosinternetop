@@ -73,19 +73,29 @@ export function Header() {
   return (
     <>
       {/* Promo Banner */}
-      {promoActive && (
-        <div className="promo-banner fixed top-0 left-0 right-0 z-50 text-center text-sm font-medium">
-          <div className="container flex items-center justify-center gap-4">
-            <span>{promoBannerText}</span>
-            <button
-              onClick={scrollToPlans}
-              className="hidden sm:inline-flex items-center gap-1 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs font-semibold transition-colors"
-            >
-              {promoBannerCta}
-            </button>
+      {promoActive && (() => {
+        const MESES_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+        const mesAtual = MESES_PT[new Date().getMonth()];
+        // Auto-replace month: explicit tokens {mes}/{MES} OR any existing PT month name
+        const monthRegex = new RegExp(`\\b(${MESES_PT.join("|")})\\b`, "gi");
+        const text = promoBannerText
+          .replace(/\{MES\}/g, mesAtual.toUpperCase())
+          .replace(/\{mes\}/gi, mesAtual)
+          .replace(monthRegex, mesAtual);
+        return (
+          <div className="promo-banner fixed top-0 left-0 right-0 z-50 text-center text-sm font-medium">
+            <div className="container flex items-center justify-center gap-4">
+              <span>{text}</span>
+              <button
+                onClick={scrollToPlans}
+                className="hidden sm:inline-flex items-center gap-1 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full text-xs font-semibold transition-colors"
+              >
+                {promoBannerCta}
+              </button>
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Main Header */}
       <header
