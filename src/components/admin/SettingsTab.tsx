@@ -9,7 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { siteConfig } from "@/lib/config";
-import { formatMonth, MonthFormat, TIMEZONE_OPTIONS, LOCALE_OPTIONS, MONTH_FORMAT_OPTIONS } from "@/lib/month-format";
+import {
+  formatMonth, MonthFormat,
+  formatSeason, SeasonFormat, Hemisphere,
+  TIMEZONE_OPTIONS, LOCALE_OPTIONS, MONTH_FORMAT_OPTIONS,
+  HEMISPHERE_OPTIONS, SEASON_FORMAT_OPTIONS,
+} from "@/lib/month-format";
 
 interface SiteSettings {
   promo_active: boolean;
@@ -23,6 +28,8 @@ interface SiteSettings {
   month_timezone: string;
   month_locale: string;
   month_format: MonthFormat;
+  season_hemisphere: Hemisphere;
+  season_format: SeasonFormat;
 }
 
 const defaultSettings: SiteSettings = {
@@ -37,6 +44,8 @@ const defaultSettings: SiteSettings = {
   month_timezone: "America/Sao_Paulo",
   month_locale: "pt-BR",
   month_format: "title",
+  season_hemisphere: "south",
+  season_format: "title",
 };
 
 export function SettingsTab() {
@@ -73,6 +82,8 @@ export function SettingsTab() {
          month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
          month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
          month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
+         season_hemisphere: (settingsMap.season_hemisphere as Hemisphere) ?? defaultSettings.season_hemisphere,
+         season_format: (settingsMap.season_format as SeasonFormat) ?? defaultSettings.season_format,
        });
      }
      setLoading(false);
@@ -105,6 +116,8 @@ export function SettingsTab() {
          saveSetting("month_timezone", settings.month_timezone),
          saveSetting("month_locale", settings.month_locale),
          saveSetting("month_format", settings.month_format),
+         saveSetting("season_hemisphere", settings.season_hemisphere),
+         saveSetting("season_format", settings.season_format),
        ]);
  
        toast({ title: "Sucesso", description: "Configurações salvas!" });
@@ -243,12 +256,12 @@ export function SettingsTab() {
            <div className="space-y-2">
              <Label>Texto do Banner</Label>
              <Input
-               value={settings.promo_banner_text}
-               onChange={(e) =>
-                 setSettings((prev) => ({ ...prev, promo_banner_text: e.target.value }))
-               }
-               placeholder="Ex: 🎉 Promoção especial!"
-             />
+              value={settings.promo_banner_text}
+                onChange={(e) =>
+                  setSettings((prev) => ({ ...prev, promo_banner_text: e.target.value }))
+                }
+                placeholder="Ex: 🔥 Promoção de {estacao} em BC e Camboriú!"
+              />
            </div>
  
            <div className="grid grid-cols-2 gap-4">
@@ -324,6 +337,11 @@ export function SettingsTab() {
          setSettings={setSettings}
        />
 
+       {/* Season Settings */}
+       <SeasonSettingsCard
+         settings={settings}
+         setSettings={setSettings}
+       />
 
  
        {/* Save Button */}
@@ -413,6 +431,70 @@ function MonthSettingsCard({
 
         <div className="p-3 bg-muted rounded-lg text-sm">
           <span className="text-muted-foreground">Pré-visualização do mês atual: </span>
+          <strong>{preview}</strong>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SeasonSettingsCard({
+  settings,
+  setSettings,
+}: {
+  settings: SiteSettings;
+  setSettings: React.Dispatch<React.SetStateAction<SiteSettings>>;
+}) {
+  const preview = useMemo(
+    () => formatSeason(new Date(), settings.season_format, settings.season_hemisphere),
+    [settings.season_format, settings.season_hemisphere],
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Estação do ano</CardTitle>
+        <CardDescription>
+          Define como a estação atual aparece nos textos automáticos do site.
+          Use <code>{"{estacao}"}</code> ou <code>{"{ESTACAO}"}</code> no texto, ou escreva o nome de uma estação —
+          ela será substituída automaticamente.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Hemisfério</Label>
+            <Select
+              value={settings.season_hemisphere}
+              onValueChange={(v) => setSettings((p) => ({ ...p, season_hemisphere: v as Hemisphere }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {HEMISPHERE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Formato da estação</Label>
+            <Select
+              value={settings.season_format}
+              onValueChange={(v) => setSettings((p) => ({ ...p, season_format: v as SeasonFormat }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {SEASON_FORMAT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="p-3 bg-muted rounded-lg text-sm">
+          <span className="text-muted-foreground">Pré-visualização da estação atual: </span>
           <strong>{preview}</strong>
         </div>
       </CardContent>
