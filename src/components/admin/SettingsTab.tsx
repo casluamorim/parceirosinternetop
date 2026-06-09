@@ -70,21 +70,21 @@ export function SettingsTab() {
          settingsMap[item.key] = item.value;
        });
  
-        setSettings({
-          promo_active: settingsMap.promo_active ?? defaultSettings.promo_active,
-          promo_banner_text: settingsMap.promo_banner_text ?? defaultSettings.promo_banner_text,
-          promo_discount: settingsMap.promo_discount ?? defaultSettings.promo_discount,
-          promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
-          company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
-          company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
-          company_email: settingsMap.company_email ?? defaultSettings.company_email,
-          company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
-          month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
-          month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
-          month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
-          season_hemisphere: (settingsMap.season_hemisphere as Hemisphere) ?? defaultSettings.season_hemisphere,
-          season_format: (settingsMap.season_format as SeasonFormat) ?? defaultSettings.season_format,
-        });
+       setSettings({
+         promo_active: settingsMap.promo_active ?? defaultSettings.promo_active,
+         promo_banner_text: settingsMap.promo_banner_text ?? defaultSettings.promo_banner_text,
+         promo_discount: settingsMap.promo_discount ?? defaultSettings.promo_discount,
+         promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
+         company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
+         company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
+         company_email: settingsMap.company_email ?? defaultSettings.company_email,
+         company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
+         month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
+         month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
+         month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
+         season_hemisphere: (settingsMap.season_hemisphere as Hemisphere) ?? defaultSettings.season_hemisphere,
+         season_format: (settingsMap.season_format as SeasonFormat) ?? defaultSettings.season_format,
+       });
      }
      setLoading(false);
    };
@@ -104,21 +104,21 @@ export function SettingsTab() {
    const handleSave = async () => {
      setSaving(true);
      try {
-        await Promise.all([
-          saveSetting("promo_active", settings.promo_active),
-          saveSetting("promo_banner_text", settings.promo_banner_text),
-          saveSetting("promo_discount", settings.promo_discount),
-          saveSetting("promo_discount_text", settings.promo_discount_text),
-          saveSetting("company_phone", settings.company_phone),
-          saveSetting("company_whatsapp", settings.company_whatsapp),
-         saveSetting("company_email", settings.company_email),
-          saveSetting("company_logo_url", settings.company_logo_url),
-          saveSetting("month_timezone", settings.month_timezone),
-          saveSetting("month_locale", settings.month_locale),
-          saveSetting("month_format", settings.month_format),
-          saveSetting("season_hemisphere", settings.season_hemisphere),
-          saveSetting("season_format", settings.season_format),
-        ]);
+       await Promise.all([
+         saveSetting("promo_active", settings.promo_active),
+         saveSetting("promo_banner_text", settings.promo_banner_text),
+         saveSetting("promo_discount", settings.promo_discount),
+         saveSetting("promo_discount_text", settings.promo_discount_text),
+         saveSetting("company_phone", settings.company_phone),
+         saveSetting("company_whatsapp", settings.company_whatsapp),
+        saveSetting("company_email", settings.company_email),
+         saveSetting("company_logo_url", settings.company_logo_url),
+         saveSetting("month_timezone", settings.month_timezone),
+         saveSetting("month_locale", settings.month_locale),
+         saveSetting("month_format", settings.month_format),
+         saveSetting("season_hemisphere", settings.season_hemisphere),
+         saveSetting("season_format", settings.season_format),
+       ]);
  
        toast({ title: "Sucesso", description: "Configurações salvas!" });
      } catch (error: any) {
@@ -331,18 +331,17 @@ export function SettingsTab() {
          </CardContent>
        </Card>
  
-        {/* Month / Timezone Settings */}
-        <MonthSettingsCard
-          settings={settings}
-          setSettings={setSettings}
-        />
+       {/* Month / Timezone Settings */}
+       <MonthSettingsCard
+         settings={settings}
+         setSettings={setSettings}
+       />
 
-        {/* Season Settings */}
-        <SeasonSettingsCard
-          settings={settings}
-          setSettings={setSettings}
-        />
-
+       {/* Season Settings */}
+       <SeasonSettingsCard
+         settings={settings}
+         setSettings={setSettings}
+       />
 
  
        {/* Save Button */}
@@ -432,6 +431,70 @@ function MonthSettingsCard({
 
         <div className="p-3 bg-muted rounded-lg text-sm">
           <span className="text-muted-foreground">Pré-visualização do mês atual: </span>
+          <strong>{preview}</strong>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SeasonSettingsCard({
+  settings,
+  setSettings,
+}: {
+  settings: SiteSettings;
+  setSettings: React.Dispatch<React.SetStateAction<SiteSettings>>;
+}) {
+  const preview = useMemo(
+    () => formatSeason(new Date(), settings.season_format, settings.season_hemisphere),
+    [settings.season_format, settings.season_hemisphere],
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Estação do ano</CardTitle>
+        <CardDescription>
+          Define como a estação atual aparece nos textos automáticos do site.
+          Use <code>{"{estacao}"}</code> ou <code>{"{ESTACAO}"}</code> no texto, ou escreva o nome de uma estação —
+          ela será substituída automaticamente.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Hemisfério</Label>
+            <Select
+              value={settings.season_hemisphere}
+              onValueChange={(v) => setSettings((p) => ({ ...p, season_hemisphere: v as Hemisphere }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {HEMISPHERE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Formato da estação</Label>
+            <Select
+              value={settings.season_format}
+              onValueChange={(v) => setSettings((p) => ({ ...p, season_format: v as SeasonFormat }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {SEASON_FORMAT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="p-3 bg-muted rounded-lg text-sm">
+          <span className="text-muted-foreground">Pré-visualização da estação atual: </span>
           <strong>{preview}</strong>
         </div>
       </CardContent>
