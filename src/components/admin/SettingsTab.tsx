@@ -1,13 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Save, RefreshCw, Upload, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { siteConfig } from "@/lib/config";
+import { formatMonth, MonthFormat, TIMEZONE_OPTIONS, LOCALE_OPTIONS, MONTH_FORMAT_OPTIONS } from "@/lib/month-format";
 
 interface SiteSettings {
   promo_active: boolean;
@@ -18,6 +20,9 @@ interface SiteSettings {
   company_whatsapp: string;
   company_email: string;
   company_logo_url: string;
+  month_timezone: string;
+  month_locale: string;
+  month_format: MonthFormat;
 }
 
 const defaultSettings: SiteSettings = {
@@ -29,6 +34,9 @@ const defaultSettings: SiteSettings = {
   company_whatsapp: siteConfig.contact.whatsappDisplay,
   company_email: siteConfig.contact.email,
   company_logo_url: "",
+  month_timezone: "America/Sao_Paulo",
+  month_locale: "pt-BR",
+  month_format: "title",
 };
 
 export function SettingsTab() {
@@ -60,8 +68,11 @@ export function SettingsTab() {
          promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
          company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
          company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
-        company_email: settingsMap.company_email ?? defaultSettings.company_email,
-        company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
+         company_email: settingsMap.company_email ?? defaultSettings.company_email,
+         company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
+         month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
+         month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
+         month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
        });
      }
      setLoading(false);
@@ -90,7 +101,10 @@ export function SettingsTab() {
          saveSetting("company_phone", settings.company_phone),
          saveSetting("company_whatsapp", settings.company_whatsapp),
         saveSetting("company_email", settings.company_email),
-        saveSetting("company_logo_url", settings.company_logo_url),
+         saveSetting("company_logo_url", settings.company_logo_url),
+         saveSetting("month_timezone", settings.month_timezone),
+         saveSetting("month_locale", settings.month_locale),
+         saveSetting("month_format", settings.month_format),
        ]);
  
        toast({ title: "Sucesso", description: "Configurações salvas!" });
@@ -304,6 +318,14 @@ export function SettingsTab() {
          </CardContent>
        </Card>
  
+       {/* Month / Timezone Settings */}
+       <MonthSettingsCard
+         settings={settings}
+         setSettings={setSettings}
+       />
+
+
+ 
        {/* Save Button */}
        <div className="flex justify-end">
          <Button onClick={handleSave} disabled={saving} size="lg">
@@ -313,4 +335,87 @@ export function SettingsTab() {
        </div>
      </div>
    );
- }
+  }
+
+function MonthSettingsCard({
+  settings,
+  setSettings,
+}: {
+  settings: SiteSettings;
+  setSettings: React.Dispatch<React.SetStateAction<SiteSettings>>;
+}) {
+  const preview = useMemo(
+    () => formatMonth(new Date(), settings.month_format, settings.month_timezone, settings.month_locale),
+    [settings.month_format, settings.month_timezone, settings.month_locale],
+  );
+  const tzGuess = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Fuso horário e formato do mês</CardTitle>
+        <CardDescription>
+          Define como o nome do mês atual aparece nos textos automáticos do site (ex.: banner promocional).
+          Use <code>{"{mes}"}</code> ou <code>{"{MES}"}</code> no texto, ou simplesmente escreva o nome de um mês —
+          ele será substituído automaticamente.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label>Fuso horário</Label>
+            <Select
+              value={settings.month_timezone}
+              onValueChange={(v) => setSettings((p) => ({ ...p, month_timezone: v }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {[settings.month_timezone, ...TIMEZONE_OPTIONS]
+                  .filter((v, i, arr) => v && arr.indexOf(v) === i)
+                  .map((tz) => (
+                    <SelectItem key={tz} value={tz}>{tz}</SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">Fuso detectado no navegador: {tzGuess}</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Idioma</Label>
+            <Select
+              value={settings.month_locale}
+              onValueChange={(v) => setSettings((p) => ({ ...p, month_locale: v }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {LOCALE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Formato do mês</Label>
+            <Select
+              value={settings.month_format}
+              onValueChange={(v) => setSettings((p) => ({ ...p, month_format: v as MonthFormat }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {MONTH_FORMAT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="p-3 bg-muted rounded-lg text-sm">
+          <span className="text-muted-foreground">Pré-visualização do mês atual: </span>
+          <strong>{preview}</strong>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

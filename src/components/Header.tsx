@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Menu, X, MessageCircle, Wifi } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { applyCurrentMonth, MonthFormat } from "@/lib/month-format";
 
 const navLinks = [
   { href: "#inicio", label: "Início" },
@@ -19,6 +20,10 @@ export function Header() {
   const [promoBannerText, setPromoBannerText] = useState(siteConfig.promo.bannerText);
   const [promoBannerCta, setPromoBannerCta] = useState(siteConfig.promo.bannerCta);
   const [logoUrl, setLogoUrl] = useState<string>("");
+  const [monthTz, setMonthTz] = useState<string>("America/Sao_Paulo");
+  const [monthLocale, setMonthLocale] = useState<string>("pt-BR");
+  const [monthFormat, setMonthFormat] = useState<MonthFormat>("title");
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,7 +58,27 @@ export function Header() {
         }
       });
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Fetch month/timezone preferences
+    supabase
+      .from("site_settings")
+      .select("key, value")
+      .in("key", ["month_timezone", "month_locale", "month_format"])
+      .then(({ data }) => {
+        (data || []).forEach((row: any) => {
+          if (typeof row.value !== "string") return;
+          if (row.key === "month_timezone") setMonthTz(row.value);
+          if (row.key === "month_locale") setMonthLocale(row.value);
+          if (row.key === "month_format") setMonthFormat(row.value as MonthFormat);
+        });
+      });
+
+    // Re-render around midnight (and hourly as safety) so the month flips automatically.
+    const interval = setInterval(() => setTick((t) => t + 1), 60 * 60 * 1000);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearInterval(interval);
+    };
   }, []);
 
   const handleWhatsApp = () => {
@@ -74,14 +99,12 @@ export function Header() {
     <>
       {/* Promo Banner */}
       {promoActive && (() => {
-        const MESES_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-        const mesAtual = MESES_PT[new Date().getMonth()];
-        // Auto-replace month: explicit tokens {mes}/{MES} OR any existing PT month name
-        const monthRegex = new RegExp(`\\b(${MESES_PT.join("|")})\\b`, "gi");
-        const text = promoBannerText
-          .replace(/\{MES\}/g, mesAtual.toUpperCase())
-          .replace(/\{mes\}/gi, mesAtual)
-          .replace(monthRegex, mesAtual);
+        void tick; // re-evaluate when interval ticks
+        const text = applyCurrentMonth(promoBannerText, {
+          format: monthFormat,
+          timezone: monthTz,
+          locale: monthLocale,
+        });
         return (
           <div className="promo-banner fixed top-0 left-0 right-0 z-50 text-center text-sm font-medium">
             <div className="container flex items-center justify-center gap-4">
