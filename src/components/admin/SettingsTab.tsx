@@ -335,4 +335,87 @@ export function SettingsTab() {
        </div>
      </div>
    );
- }
+  }
+
+function MonthSettingsCard({
+  settings,
+  setSettings,
+}: {
+  settings: SiteSettings;
+  setSettings: React.Dispatch<React.SetStateAction<SiteSettings>>;
+}) {
+  const preview = useMemo(
+    () => formatMonth(new Date(), settings.month_format, settings.month_timezone, settings.month_locale),
+    [settings.month_format, settings.month_timezone, settings.month_locale],
+  );
+  const tzGuess = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Fuso horário e formato do mês</CardTitle>
+        <CardDescription>
+          Define como o nome do mês atual aparece nos textos automáticos do site (ex.: banner promocional).
+          Use <code>{"{mes}"}</code> ou <code>{"{MES}"}</code> no texto, ou simplesmente escreva o nome de um mês —
+          ele será substituído automaticamente.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="space-y-2">
+            <Label>Fuso horário</Label>
+            <Select
+              value={settings.month_timezone}
+              onValueChange={(v) => setSettings((p) => ({ ...p, month_timezone: v }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {[settings.month_timezone, ...TIMEZONE_OPTIONS]
+                  .filter((v, i, arr) => v && arr.indexOf(v) === i)
+                  .map((tz) => (
+                    <SelectItem key={tz} value={tz}>{tz}</SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">Fuso detectado no navegador: {tzGuess}</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Idioma</Label>
+            <Select
+              value={settings.month_locale}
+              onValueChange={(v) => setSettings((p) => ({ ...p, month_locale: v }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {LOCALE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Formato do mês</Label>
+            <Select
+              value={settings.month_format}
+              onValueChange={(v) => setSettings((p) => ({ ...p, month_format: v as MonthFormat }))}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {MONTH_FORMAT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="p-3 bg-muted rounded-lg text-sm">
+          <span className="text-muted-foreground">Pré-visualização do mês atual: </span>
+          <strong>{preview}</strong>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
