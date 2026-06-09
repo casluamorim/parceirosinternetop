@@ -318,6 +318,14 @@ export function SettingsTab() {
          </CardContent>
        </Card>
  
+       {/* Month / Timezone Settings */}
+       <MonthSettingsCard
+         settings={settings}
+         setSettings={setSettings}
+       />
+
+
+ 
        {/* Save Button */}
        <div className="flex justify-end">
          <Button onClick={handleSave} disabled={saving} size="lg">
