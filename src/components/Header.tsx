@@ -58,7 +58,27 @@ export function Header() {
         }
       });
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    // Fetch month/timezone preferences
+    supabase
+      .from("site_settings")
+      .select("key, value")
+      .in("key", ["month_timezone", "month_locale", "month_format"])
+      .then(({ data }) => {
+        (data || []).forEach((row: any) => {
+          if (typeof row.value !== "string") return;
+          if (row.key === "month_timezone") setMonthTz(row.value);
+          if (row.key === "month_locale") setMonthLocale(row.value);
+          if (row.key === "month_format") setMonthFormat(row.value as MonthFormat);
+        });
+      });
+
+    // Re-render around midnight (and hourly as safety) so the month flips automatically.
+    const interval = setInterval(() => setTick((t) => t + 1), 60 * 60 * 1000);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearInterval(interval);
+    };
   }, []);
 
   const handleWhatsApp = () => {
