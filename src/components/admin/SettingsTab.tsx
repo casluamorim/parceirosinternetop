@@ -1,13 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Save, RefreshCw, Upload, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { siteConfig } from "@/lib/config";
+import { formatMonth, MonthFormat } from "@/lib/month-format";
 
 interface SiteSettings {
   promo_active: boolean;
@@ -18,6 +20,9 @@ interface SiteSettings {
   company_whatsapp: string;
   company_email: string;
   company_logo_url: string;
+  month_timezone: string;
+  month_locale: string;
+  month_format: MonthFormat;
 }
 
 const defaultSettings: SiteSettings = {
@@ -29,6 +34,9 @@ const defaultSettings: SiteSettings = {
   company_whatsapp: siteConfig.contact.whatsappDisplay,
   company_email: siteConfig.contact.email,
   company_logo_url: "",
+  month_timezone: "America/Sao_Paulo",
+  month_locale: "pt-BR",
+  month_format: "title",
 };
 
 export function SettingsTab() {
