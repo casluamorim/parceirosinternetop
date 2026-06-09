@@ -28,6 +28,8 @@ interface SiteSettings {
   month_timezone: string;
   month_locale: string;
   month_format: MonthFormat;
+  season_hemisphere: Hemisphere;
+  season_format: SeasonFormat;
 }
 
 const defaultSettings: SiteSettings = {
@@ -42,6 +44,8 @@ const defaultSettings: SiteSettings = {
   month_timezone: "America/Sao_Paulo",
   month_locale: "pt-BR",
   month_format: "title",
+  season_hemisphere: "south",
+  season_format: "title",
 };
 
 export function SettingsTab() {
