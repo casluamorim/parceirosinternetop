@@ -20,6 +20,10 @@ export function Header() {
   const [promoBannerText, setPromoBannerText] = useState(siteConfig.promo.bannerText);
   const [promoBannerCta, setPromoBannerCta] = useState(siteConfig.promo.bannerCta);
   const [logoUrl, setLogoUrl] = useState<string>("");
+  const [monthTz, setMonthTz] = useState<string>("America/Sao_Paulo");
+  const [monthLocale, setMonthLocale] = useState<string>("pt-BR");
+  const [monthFormat, setMonthFormat] = useState<MonthFormat>("title");
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
