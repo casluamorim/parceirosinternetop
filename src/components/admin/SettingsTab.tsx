@@ -101,7 +101,10 @@ export function SettingsTab() {
          saveSetting("company_phone", settings.company_phone),
          saveSetting("company_whatsapp", settings.company_whatsapp),
         saveSetting("company_email", settings.company_email),
-        saveSetting("company_logo_url", settings.company_logo_url),
+         saveSetting("company_logo_url", settings.company_logo_url),
+         saveSetting("month_timezone", settings.month_timezone),
+         saveSetting("month_locale", settings.month_locale),
+         saveSetting("month_format", settings.month_format),
        ]);
  
        toast({ title: "Sucesso", description: "Configurações salvas!" });
