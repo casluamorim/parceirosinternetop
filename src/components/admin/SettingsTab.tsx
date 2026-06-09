@@ -9,7 +9,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { siteConfig } from "@/lib/config";
-import { formatMonth, MonthFormat, TIMEZONE_OPTIONS, LOCALE_OPTIONS, MONTH_FORMAT_OPTIONS } from "@/lib/month-format";
+import {
+  formatMonth, MonthFormat,
+  formatSeason, SeasonFormat, Hemisphere,
+  TIMEZONE_OPTIONS, LOCALE_OPTIONS, MONTH_FORMAT_OPTIONS,
+  HEMISPHERE_OPTIONS, SEASON_FORMAT_OPTIONS,
+} from "@/lib/month-format";
 
 interface SiteSettings {
   promo_active: boolean;
