@@ -3,7 +3,7 @@ import { Menu, X, MessageCircle, Wifi } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { applyCurrentMonth, MonthFormat } from "@/lib/month-format";
+import { applyCurrentMonth, applyCurrentSeason, MonthFormat, SeasonFormat, Hemisphere } from "@/lib/month-format";
 
 const navLinks = [
   { href: "#inicio", label: "Início" },
@@ -23,6 +23,8 @@ export function Header() {
   const [monthTz, setMonthTz] = useState<string>("America/Sao_Paulo");
   const [monthLocale, setMonthLocale] = useState<string>("pt-BR");
   const [monthFormat, setMonthFormat] = useState<MonthFormat>("title");
+  const [seasonHemisphere, setSeasonHemisphere] = useState<Hemisphere>("south");
+  const [seasonFormat, setSeasonFormat] = useState<SeasonFormat>("title");
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -58,17 +60,19 @@ export function Header() {
         }
       });
 
-    // Fetch month/timezone preferences
+    // Fetch month/timezone and season preferences
     supabase
       .from("site_settings")
       .select("key, value")
-      .in("key", ["month_timezone", "month_locale", "month_format"])
+      .in("key", ["month_timezone", "month_locale", "month_format", "season_hemisphere", "season_format"])
       .then(({ data }) => {
         (data || []).forEach((row: any) => {
           if (typeof row.value !== "string") return;
           if (row.key === "month_timezone") setMonthTz(row.value);
           if (row.key === "month_locale") setMonthLocale(row.value);
           if (row.key === "month_format") setMonthFormat(row.value as MonthFormat);
+          if (row.key === "season_hemisphere") setSeasonHemisphere(row.value as Hemisphere);
+          if (row.key === "season_format") setSeasonFormat(row.value as SeasonFormat);
         });
       });
 
@@ -100,10 +104,14 @@ export function Header() {
       {/* Promo Banner */}
       {promoActive && (() => {
         void tick; // re-evaluate when interval ticks
-        const text = applyCurrentMonth(promoBannerText, {
+        let text = applyCurrentMonth(promoBannerText, {
           format: monthFormat,
           timezone: monthTz,
           locale: monthLocale,
+        });
+        text = applyCurrentSeason(text, {
+          format: seasonFormat,
+          hemisphere: seasonHemisphere,
         });
         return (
           <div className="promo-banner fixed top-0 left-0 right-0 z-50 text-center text-sm font-medium">
