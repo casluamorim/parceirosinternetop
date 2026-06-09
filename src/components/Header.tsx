@@ -99,14 +99,12 @@ export function Header() {
     <>
       {/* Promo Banner */}
       {promoActive && (() => {
-        const MESES_PT = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-        const mesAtual = MESES_PT[new Date().getMonth()];
-        // Auto-replace month: explicit tokens {mes}/{MES} OR any existing PT month name
-        const monthRegex = new RegExp(`\\b(${MESES_PT.join("|")})\\b`, "gi");
-        const text = promoBannerText
-          .replace(/\{MES\}/g, mesAtual.toUpperCase())
-          .replace(/\{mes\}/gi, mesAtual)
-          .replace(monthRegex, mesAtual);
+        void tick; // re-evaluate when interval ticks
+        const text = applyCurrentMonth(promoBannerText, {
+          format: monthFormat,
+          timezone: monthTz,
+          locale: monthLocale,
+        });
         return (
           <div className="promo-banner fixed top-0 left-0 right-0 z-50 text-center text-sm font-medium">
             <div className="container flex items-center justify-center gap-4">
