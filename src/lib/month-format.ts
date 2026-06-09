@@ -89,6 +89,60 @@ export function formatMonth(
   return short ? `${styled}.` : styled;
 }
 
+export type Hemisphere = "south" | "north";
+
+export const HEMISPHERE_OPTIONS: { value: Hemisphere; label: string }[] = [
+  { value: "south", label: "Hemisfério Sul (Brasil)" },
+  { value: "north", label: "Hemisfério Norte" },
+];
+
+export type SeasonFormat =
+  | "title"      // Verão
+  | "lower"      // verão
+  | "upper";     // VERÃO
+
+export const SEASON_FORMAT_OPTIONS: { value: SeasonFormat; label: string }[] = [
+  { value: "title", label: "Verão (primeira maiúscula)" },
+  { value: "lower", label: "verão (minúsculo)" },
+  { value: "upper", label: "VERÃO (maiúsculo)" },
+];
+
+function getSeasonIndex(date: Date, hemisphere: Hemisphere): number {
+  const m = date.getMonth() + 1; // 1–12
+  const d = date.getDate();
+  if (hemisphere === "south") {
+    if ((m === 9 && d >= 23) || m === 10 || m === 11 || (m === 12 && d <= 20)) return 0; // Primavera
+    if ((m === 12 && d >= 21) || m === 1 || m === 2 || (m === 3 && d <= 20)) return 1; // Verão
+    if ((m === 3 && d >= 21) || m === 4 || m === 5 || (m === 6 && d <= 20)) return 2; // Outono
+    return 3; // Inverno
+  } else {
+    if ((m === 3 && d >= 21) || m === 4 || m === 5 || (m === 6 && d <= 20)) return 0; // Primavera
+    if ((m === 6 && d >= 21) || m === 7 || m === 8 || (m === 9 && d <= 22)) return 1; // Verão
+    if ((m === 9 && d >= 23) || m === 10 || m === 11 || (m === 12 && d <= 20)) return 2; // Outono
+    return 3; // Inverno
+  }
+}
+
+const SEASONS_PT = ["Primavera", "Verão", "Outono", "Inverno"];
+
+export function formatSeason(
+  date: Date,
+  format: SeasonFormat = "title",
+  hemisphere: Hemisphere = "south",
+): string {
+  const idx = getSeasonIndex(date, hemisphere);
+  const base = SEASONS_PT[idx];
+  switch (format) {
+    case "lower":
+      return base.toLocaleLowerCase();
+    case "upper":
+      return base.toLocaleUpperCase();
+    case "title":
+    default:
+      return base;
+  }
+}
+
 // All long month names in a locale/timezone — used to detect existing month words in text.
 export function allMonthNames(locale: string, timezone: string): string[] {
   const names: string[] = [];
@@ -130,6 +184,33 @@ export function applyCurrentMonth(
   const sorted = Array.from(candidates).sort((a, b) => b.length - a.length).map(esc);
   if (sorted.length) {
     const re = new RegExp(`\\b(${sorted.join("|")})\\.?\\b`, "gi");
+    out = out.replace(re, replacement);
+  }
+  return out;
+}
+
+/**
+ * Replace {estacao} / {ESTACAO} tokens AND detected season names
+ * with the current season using the given format/hemisphere.
+ */
+export function applyCurrentSeason(
+  text: string,
+  opts: { format?: SeasonFormat; hemisphere?: Hemisphere } = {},
+): string {
+  const format = opts.format ?? "title";
+  const hemisphere = opts.hemisphere ?? "south";
+  const now = new Date();
+  const replacement = formatSeason(now, format, hemisphere);
+
+  let out = text
+    .replace(/\{ESTACAO\}/g, replacement.toLocaleUpperCase())
+    .replace(/\{estacao\}/gi, replacement);
+
+  // Also replace any known season word with the current one.
+  const seasons = Array.from(new Set(SEASONS_PT.flatMap((s) => [s, s.toLocaleLowerCase(), s.toLocaleUpperCase()])));
+  const sorted = seasons.sort((a, b) => b.length - a.length).map(esc);
+  if (sorted.length) {
+    const re = new RegExp(`\\b(${sorted.join("|")})\\b`, "gi");
     out = out.replace(re, replacement);
   }
   return out;
