@@ -70,19 +70,21 @@ export function SettingsTab() {
          settingsMap[item.key] = item.value;
        });
  
-       setSettings({
-         promo_active: settingsMap.promo_active ?? defaultSettings.promo_active,
-         promo_banner_text: settingsMap.promo_banner_text ?? defaultSettings.promo_banner_text,
-         promo_discount: settingsMap.promo_discount ?? defaultSettings.promo_discount,
-         promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
-         company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
-         company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
-         company_email: settingsMap.company_email ?? defaultSettings.company_email,
-         company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
-         month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
-         month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
-         month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
-       });
+        setSettings({
+          promo_active: settingsMap.promo_active ?? defaultSettings.promo_active,
+          promo_banner_text: settingsMap.promo_banner_text ?? defaultSettings.promo_banner_text,
+          promo_discount: settingsMap.promo_discount ?? defaultSettings.promo_discount,
+          promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
+          company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
+          company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
+          company_email: settingsMap.company_email ?? defaultSettings.company_email,
+          company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
+          month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
+          month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
+          month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
+          season_hemisphere: (settingsMap.season_hemisphere as Hemisphere) ?? defaultSettings.season_hemisphere,
+          season_format: (settingsMap.season_format as SeasonFormat) ?? defaultSettings.season_format,
+        });
      }
      setLoading(false);
    };
@@ -102,19 +104,21 @@ export function SettingsTab() {
    const handleSave = async () => {
      setSaving(true);
      try {
-       await Promise.all([
-         saveSetting("promo_active", settings.promo_active),
-         saveSetting("promo_banner_text", settings.promo_banner_text),
-         saveSetting("promo_discount", settings.promo_discount),
-         saveSetting("promo_discount_text", settings.promo_discount_text),
-         saveSetting("company_phone", settings.company_phone),
-         saveSetting("company_whatsapp", settings.company_whatsapp),
-        saveSetting("company_email", settings.company_email),
-         saveSetting("company_logo_url", settings.company_logo_url),
-         saveSetting("month_timezone", settings.month_timezone),
-         saveSetting("month_locale", settings.month_locale),
-         saveSetting("month_format", settings.month_format),
-       ]);
+        await Promise.all([
+          saveSetting("promo_active", settings.promo_active),
+          saveSetting("promo_banner_text", settings.promo_banner_text),
+          saveSetting("promo_discount", settings.promo_discount),
+          saveSetting("promo_discount_text", settings.promo_discount_text),
+          saveSetting("company_phone", settings.company_phone),
+          saveSetting("company_whatsapp", settings.company_whatsapp),
+         saveSetting("company_email", settings.company_email),
+          saveSetting("company_logo_url", settings.company_logo_url),
+          saveSetting("month_timezone", settings.month_timezone),
+          saveSetting("month_locale", settings.month_locale),
+          saveSetting("month_format", settings.month_format),
+          saveSetting("season_hemisphere", settings.season_hemisphere),
+          saveSetting("season_format", settings.season_format),
+        ]);
  
        toast({ title: "Sucesso", description: "Configurações salvas!" });
      } catch (error: any) {
