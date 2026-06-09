@@ -331,11 +331,17 @@ export function SettingsTab() {
          </CardContent>
        </Card>
  
-       {/* Month / Timezone Settings */}
-       <MonthSettingsCard
-         settings={settings}
-         setSettings={setSettings}
-       />
+        {/* Month / Timezone Settings */}
+        <MonthSettingsCard
+          settings={settings}
+          setSettings={setSettings}
+        />
+
+        {/* Season Settings */}
+        <SeasonSettingsCard
+          settings={settings}
+          setSettings={setSettings}
+        />
 
 
  
