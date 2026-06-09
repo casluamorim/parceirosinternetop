@@ -68,8 +68,11 @@ export function SettingsTab() {
          promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
          company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
          company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
-        company_email: settingsMap.company_email ?? defaultSettings.company_email,
-        company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
+         company_email: settingsMap.company_email ?? defaultSettings.company_email,
+         company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
+         month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
+         month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
+         month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
        });
      }
      setLoading(false);
