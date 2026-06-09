@@ -256,12 +256,12 @@ export function SettingsTab() {
            <div className="space-y-2">
              <Label>Texto do Banner</Label>
              <Input
-               value={settings.promo_banner_text}
-               onChange={(e) =>
-                 setSettings((prev) => ({ ...prev, promo_banner_text: e.target.value }))
-               }
-               placeholder="Ex: 🎉 Promoção especial!"
-             />
+              value={settings.promo_banner_text}
+                onChange={(e) =>
+                  setSettings((prev) => ({ ...prev, promo_banner_text: e.target.value }))
+                }
+                placeholder="Ex: 🔥 Promoção de {estacao} em BC e Camboriú!"
+              />
            </div>
  
            <div className="grid grid-cols-2 gap-4">
