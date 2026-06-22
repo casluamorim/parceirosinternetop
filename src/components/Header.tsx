@@ -139,21 +139,21 @@ export function Header() {
         }`}
       >
         <div className="container">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+          <div className="flex items-center justify-between h-20 lg:h-28">
             {/* Logo */}
             <a href="#inicio" className="flex items-center gap-2">
               {logoUrl ? (
-                <img src={logoUrl} alt={siteConfig.company.name} className="h-10 lg:h-12 w-auto object-contain" />
+                <img src={logoUrl} alt={siteConfig.company.name} className="h-16 lg:h-20 xl:h-24 w-auto object-contain" />
               ) : (
                 <>
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
-                    <Wifi className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center">
+                    <Wifi className="w-7 h-7 lg:w-8 lg:h-8 text-white" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-display font-bold text-lg leading-tight text-foreground">
+                    <span className="font-display font-bold text-xl lg:text-2xl leading-tight text-foreground">
                       {siteConfig.company.shortName}
                     </span>
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider">
+                    <span className="text-[11px] text-muted-foreground uppercase tracking-wider">
                       Internet
                     </span>
                   </div>
