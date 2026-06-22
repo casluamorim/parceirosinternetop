@@ -66,7 +66,7 @@ export function BusinessSection() {
 
         {/* Plans Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12">
-          {businessPlans.map((plan, index) => (
+          {plans.map((plan, index) => (
             <div
               key={plan.id}
               className="rounded-2xl bg-white/5 border border-white/10 p-6 lg:p-8 backdrop-blur-sm hover:bg-white/10 transition-all animate-fade-in"
