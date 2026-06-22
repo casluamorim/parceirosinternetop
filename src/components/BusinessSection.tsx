@@ -1,31 +1,44 @@
- import { useState, useEffect } from "react";
- import { Check, MessageCircle, Building2 } from "lucide-react";
- import { businessPlans, siteConfig } from "@/lib/config";
- import { supabase } from "@/integrations/supabase/client";
- 
- interface TrustedCompany {
-   id: string;
-   name: string;
-   logo_url: string;
- }
+import { useState, useEffect } from "react";
+import { Check, MessageCircle, Building2 } from "lucide-react";
+import { businessPlans as fallbackBusinessPlans, siteConfig } from "@/lib/config";
+import { supabase } from "@/integrations/supabase/client";
+
+interface TrustedCompany {
+  id: string;
+  name: string;
+  logo_url: string;
+}
+
+interface BusinessPlan {
+  id: string;
+  name: string;
+  speed: number;
+  price: number;
+  features: string[] | null;
+  badge?: string | null;
+}
 
 export function BusinessSection() {
-   const [trustedCompanies, setTrustedCompanies] = useState<TrustedCompany[]>([]);
- 
-   useEffect(() => {
-     const fetchCompanies = async () => {
-       const { data } = await supabase
-         .from("trusted_companies")
-         .select("id, name, logo_url")
-         .order("display_order");
-       if (data) setTrustedCompanies(data);
-     };
-     fetchCompanies();
-   }, []);
- 
-  const handleWhatsApp = (plan: typeof businessPlans[0]) => {
+  const [trustedCompanies, setTrustedCompanies] = useState<TrustedCompany[]>([]);
+  const [plans, setPlans] = useState<BusinessPlan[]>(
+    fallbackBusinessPlans.map((p) => ({ ...p, features: p.features }))
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const [companiesRes, plansRes] = await Promise.all([
+        supabase.from("trusted_companies").select("id, name, logo_url").order("display_order"),
+        supabase.from("business_plans").select("id, name, speed, price, features, badge").order("speed"),
+      ]);
+      if (companiesRes.data) setTrustedCompanies(companiesRes.data);
+      if (plansRes.data && plansRes.data.length > 0) setPlans(plansRes.data as BusinessPlan[]);
+    };
+    fetchData();
+  }, []);
+
+  const handleWhatsApp = (plan: BusinessPlan) => {
     const message = encodeURIComponent(
-      `Olá! Tenho interesse no plano empresarial ${plan.name} de ${plan.speed} Mega. Gostaria de falar com um consultor.`
+      `Olá! Tenho interesse no plano empresarial ${plan.name} de ${plan.speed} Mbps. Gostaria de falar com um consultor.`
     );
     window.open(
       `https://wa.me/${siteConfig.contact.whatsapp}?text=${message}`,
@@ -53,7 +66,7 @@ export function BusinessSection() {
 
         {/* Plans Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 mb-12">
-          {businessPlans.map((plan, index) => (
+          {plans.map((plan, index) => (
             <div
               key={plan.id}
               className="rounded-2xl bg-white/5 border border-white/10 p-6 lg:p-8 backdrop-blur-sm hover:bg-white/10 transition-all animate-fade-in"
@@ -89,7 +102,7 @@ export function BusinessSection() {
 
               {/* Features */}
               <ul className="space-y-3 mb-8">
-                {plan.features.map((feature, i) => (
+                {(plan.features ?? []).map((feature, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm">
                     <div className="w-5 h-5 rounded-full bg-primary-lighter/20 flex items-center justify-center flex-shrink-0">
                       <Check className="w-3 h-3 text-primary-lighter" />
