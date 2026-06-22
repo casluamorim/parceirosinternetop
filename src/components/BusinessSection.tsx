@@ -70,7 +70,7 @@ export function BusinessSection() {
                 <div className="text-5xl font-display font-bold text-primary-lighter">
                   {plan.speed}
                 </div>
-                <div className="text-lg text-white/60">Mega</div>
+                <div className="text-lg text-white/60">Mbps Dedicado</div>
               </div>
 
               {/* Price */}
