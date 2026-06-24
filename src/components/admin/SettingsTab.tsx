@@ -185,6 +185,10 @@ export function SettingsTab() {
       toast({ title: "Erro", description: "Selecione uma imagem.", variant: "destructive" });
       return;
     }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Erro", description: "Imagem muito grande (máx 5MB).", variant: "destructive" });
+      return;
+    }
     setUploadingLogo(true);
     try {
       const ext = file.name.split(".").pop() || "png";
