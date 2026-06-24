@@ -20,6 +20,7 @@ import VendedoresPage from "./pages/sales/VendedoresPage";
 import Preview from "./pages/Preview";
 import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
 import TermosUso from "./pages/TermosUso";
+import { TrackingPixels } from "./components/TrackingPixels";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <TrackingPixels />
 
       <BrowserRouter>
         <Routes>
