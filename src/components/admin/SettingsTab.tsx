@@ -397,7 +397,56 @@ export function SettingsTab() {
          setSettings={setSettings}
        />
 
- 
+       {/* Tracking / Marketing Pixels */}
+       <Card>
+         <CardHeader>
+           <CardTitle>Pixels de rastreamento</CardTitle>
+           <CardDescription>
+             IDs dos pixels de marketing. Deixe em branco para desativar. As tags são carregadas automaticamente em todas as páginas do site.
+           </CardDescription>
+         </CardHeader>
+         <CardContent className="space-y-4">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+             <div className="space-y-2">
+               <Label>Meta / Facebook Pixel ID</Label>
+               <Input
+                 value={settings.tracking_meta_pixel_id}
+                 onChange={(e) => setSettings((p) => ({ ...p, tracking_meta_pixel_id: e.target.value }))}
+                 placeholder="Ex: 1234567890123456"
+               />
+             </div>
+             <div className="space-y-2">
+               <Label>Google Analytics 4 (Measurement ID)</Label>
+               <Input
+                 value={settings.tracking_ga_id}
+                 onChange={(e) => setSettings((p) => ({ ...p, tracking_ga_id: e.target.value }))}
+                 placeholder="Ex: G-XXXXXXXXXX"
+               />
+             </div>
+             <div className="space-y-2">
+               <Label>Google Tag Manager (Container ID)</Label>
+               <Input
+                 value={settings.tracking_gtm_id}
+                 onChange={(e) => setSettings((p) => ({ ...p, tracking_gtm_id: e.target.value }))}
+                 placeholder="Ex: GTM-XXXXXXX"
+               />
+             </div>
+             <div className="space-y-2">
+               <Label>TikTok Pixel ID</Label>
+               <Input
+                 value={settings.tracking_tiktok_pixel_id}
+                 onChange={(e) => setSettings((p) => ({ ...p, tracking_tiktok_pixel_id: e.target.value }))}
+                 placeholder="Ex: CXXXXXXXXXXXXXXXXXXX"
+               />
+             </div>
+           </div>
+           <p className="text-xs text-muted-foreground">
+             As alterações entram em vigor após salvar e recarregar a página. Use apenas letras, números, "_" e "-".
+           </p>
+         </CardContent>
+       </Card>
+
+
        {/* Save Button */}
        <div className="flex justify-end">
          <Button onClick={handleSave} disabled={saving} size="lg">
