@@ -177,8 +177,6 @@ export function SettingsTab() {
      }
    };
 
-   const handleLogoUploadValidated = handleLogoUpload;
-   void handleLogoUploadValidated;
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
