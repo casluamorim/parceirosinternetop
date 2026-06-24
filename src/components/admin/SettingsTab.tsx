@@ -16,6 +16,8 @@ import {
   HEMISPHERE_OPTIONS, SEASON_FORMAT_OPTIONS,
 } from "@/lib/month-format";
 
+import { z } from "zod";
+
 interface SiteSettings {
   promo_active: boolean;
   promo_banner_text: string;
@@ -30,6 +32,10 @@ interface SiteSettings {
   month_format: MonthFormat;
   season_hemisphere: Hemisphere;
   season_format: SeasonFormat;
+  tracking_meta_pixel_id: string;
+  tracking_ga_id: string;
+  tracking_gtm_id: string;
+  tracking_tiktok_pixel_id: string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -46,7 +52,36 @@ const defaultSettings: SiteSettings = {
   month_format: "title",
   season_hemisphere: "south",
   season_format: "title",
+  tracking_meta_pixel_id: "",
+  tracking_ga_id: "",
+  tracking_gtm_id: "",
+  tracking_tiktok_pixel_id: "",
 };
+
+// Validation: only alphanumerics, dash, underscore. Length-limited.
+const trackingIdSchema = z
+  .string()
+  .trim()
+  .max(64, "ID muito longo")
+  .regex(/^[A-Za-z0-9_\-]*$/, "Use apenas letras, números, _ e -");
+
+const settingsSchema = z.object({
+  promo_banner_text: z.string().trim().max(300, "Texto muito longo (máx 300)"),
+  promo_discount: z.string().trim().max(40),
+  promo_discount_text: z.string().trim().max(120),
+  company_phone: z.string().trim().max(40),
+  company_whatsapp: z.string().trim().max(40),
+  company_email: z
+    .string()
+    .trim()
+    .max(120)
+    .refine((v) => v === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), "E-mail inválido"),
+  company_logo_url: z.string().trim().max(500),
+  tracking_meta_pixel_id: trackingIdSchema,
+  tracking_ga_id: trackingIdSchema,
+  tracking_gtm_id: trackingIdSchema,
+  tracking_tiktok_pixel_id: trackingIdSchema,
+});
 
 export function SettingsTab() {
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
@@ -70,22 +105,26 @@ export function SettingsTab() {
          settingsMap[item.key] = item.value;
        });
  
-       setSettings({
-         promo_active: settingsMap.promo_active ?? defaultSettings.promo_active,
-         promo_banner_text: settingsMap.promo_banner_text ?? defaultSettings.promo_banner_text,
-         promo_discount: settingsMap.promo_discount ?? defaultSettings.promo_discount,
-         promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
-         company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
-         company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
-         company_email: settingsMap.company_email ?? defaultSettings.company_email,
-         company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
-         month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
-         month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
-         month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
-         season_hemisphere: (settingsMap.season_hemisphere as Hemisphere) ?? defaultSettings.season_hemisphere,
-         season_format: (settingsMap.season_format as SeasonFormat) ?? defaultSettings.season_format,
-       });
-     }
+        setSettings({
+          promo_active: settingsMap.promo_active ?? defaultSettings.promo_active,
+          promo_banner_text: settingsMap.promo_banner_text ?? defaultSettings.promo_banner_text,
+          promo_discount: settingsMap.promo_discount ?? defaultSettings.promo_discount,
+          promo_discount_text: settingsMap.promo_discount_text ?? defaultSettings.promo_discount_text,
+          company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
+          company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
+          company_email: settingsMap.company_email ?? defaultSettings.company_email,
+          company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
+          month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
+          month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
+          month_format: (settingsMap.month_format as MonthFormat) ?? defaultSettings.month_format,
+          season_hemisphere: (settingsMap.season_hemisphere as Hemisphere) ?? defaultSettings.season_hemisphere,
+          season_format: (settingsMap.season_format as SeasonFormat) ?? defaultSettings.season_format,
+          tracking_meta_pixel_id: settingsMap.tracking_meta_pixel_id ?? "",
+          tracking_ga_id: settingsMap.tracking_ga_id ?? "",
+          tracking_gtm_id: settingsMap.tracking_gtm_id ?? "",
+          tracking_tiktok_pixel_id: settingsMap.tracking_tiktok_pixel_id ?? "",
+        });
+      }
      setLoading(false);
    };
  
@@ -102,24 +141,34 @@ export function SettingsTab() {
    };
  
    const handleSave = async () => {
+     const parsed = settingsSchema.safeParse(settings);
+     if (!parsed.success) {
+       const first = parsed.error.issues[0];
+       toast({ title: "Dados inválidos", description: first.message, variant: "destructive" });
+       return;
+     }
      setSaving(true);
      try {
        await Promise.all([
          saveSetting("promo_active", settings.promo_active),
-         saveSetting("promo_banner_text", settings.promo_banner_text),
-         saveSetting("promo_discount", settings.promo_discount),
-         saveSetting("promo_discount_text", settings.promo_discount_text),
-         saveSetting("company_phone", settings.company_phone),
-         saveSetting("company_whatsapp", settings.company_whatsapp),
-        saveSetting("company_email", settings.company_email),
-         saveSetting("company_logo_url", settings.company_logo_url),
+         saveSetting("promo_banner_text", settings.promo_banner_text.trim()),
+         saveSetting("promo_discount", settings.promo_discount.trim()),
+         saveSetting("promo_discount_text", settings.promo_discount_text.trim()),
+         saveSetting("company_phone", settings.company_phone.trim()),
+         saveSetting("company_whatsapp", settings.company_whatsapp.trim()),
+         saveSetting("company_email", settings.company_email.trim()),
+         saveSetting("company_logo_url", settings.company_logo_url.trim()),
          saveSetting("month_timezone", settings.month_timezone),
          saveSetting("month_locale", settings.month_locale),
          saveSetting("month_format", settings.month_format),
          saveSetting("season_hemisphere", settings.season_hemisphere),
          saveSetting("season_format", settings.season_format),
+         saveSetting("tracking_meta_pixel_id", settings.tracking_meta_pixel_id.trim()),
+         saveSetting("tracking_ga_id", settings.tracking_ga_id.trim()),
+         saveSetting("tracking_gtm_id", settings.tracking_gtm_id.trim()),
+         saveSetting("tracking_tiktok_pixel_id", settings.tracking_tiktok_pixel_id.trim()),
        ]);
- 
+
        toast({ title: "Sucesso", description: "Configurações salvas!" });
      } catch (error: any) {
        toast({ title: "Erro", description: error.message, variant: "destructive" });
@@ -127,6 +176,9 @@ export function SettingsTab() {
        setSaving(false);
      }
    };
+
+   const handleLogoUploadValidated = handleLogoUpload;
+   void handleLogoUploadValidated;
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
