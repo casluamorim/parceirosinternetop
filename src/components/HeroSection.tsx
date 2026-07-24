@@ -222,7 +222,7 @@ export function HeroSection() {
       </div>
 
       <div className="container relative">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 items-center">
           {/* Left Content */}
           <motion.div 
             className="text-center lg:text-left"
@@ -245,7 +245,7 @@ export function HeroSection() {
 
             {/* Headline */}
             <motion.h1 
-              className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6"
+              className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6 leading-tight"
               variants={itemVariants}
             >
               Internet fibra óptica{" "}
@@ -253,7 +253,7 @@ export function HeroSection() {
             </motion.h1>
 
             <motion.p 
-              className="text-lg text-muted-foreground mb-8 max-w-lg mx-auto lg:mx-0"
+              className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 max-w-lg mx-auto lg:mx-0"
               variants={itemVariants}
             >
               Conexão ultrarrápida para sua casa em Balneário Camboriú e Camboriú. 
@@ -263,28 +263,28 @@ export function HeroSection() {
             {/* Featured Plan Highlight */}
             {featuredPlan && promo.showFeatured && (
             <motion.div 
-              className="card-premium p-6 mb-8 inline-block"
+              className="card-premium p-4 sm:p-6 mb-6 sm:mb-8 inline-block max-w-full"
               variants={itemVariants}
               whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
             >
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3 sm:gap-6">
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">
+                  <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                     {promo.featuredLabel}
                   </div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="speed-display text-5xl">{featuredPlan.speed}</span>
-                    <span className="text-xl font-semibold text-muted-foreground">Mega</span>
+                  <div className="flex items-baseline gap-1 sm:gap-2">
+                    <span className="speed-display text-4xl sm:text-5xl">{featuredPlan.speed}</span>
+                    <span className="text-base sm:text-xl font-semibold text-muted-foreground">Mega</span>
                   </div>
                 </div>
-                <div className="h-16 w-px bg-border" />
+                <div className="h-12 sm:h-16 w-px bg-border" />
                 <div>
-                  <div className="text-sm text-muted-foreground line-through">
+                  <div className="text-xs sm:text-sm text-muted-foreground line-through">
                     R$ {featuredPlan.originalPrice.toFixed(2).replace(".", ",")}
                   </div>
-                  <div className="text-3xl font-display font-bold text-foreground">
+                  <div className="text-2xl sm:text-3xl font-display font-bold text-foreground whitespace-nowrap">
                     R$ {featuredPlan.price.toFixed(2).replace(".", ",")}
-                    <span className="text-sm font-normal text-muted-foreground">/mês</span>
+                    <span className="text-xs sm:text-sm font-normal text-muted-foreground">/mês</span>
                   </div>
                 </div>
               </div>
@@ -293,12 +293,12 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <motion.div 
-              className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
               variants={itemVariants}
             >
               <motion.button 
                 onClick={scrollToPlans} 
-                className="btn-primary text-lg px-8 py-4"
+                className="btn-primary text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -307,7 +307,7 @@ export function HeroSection() {
               </motion.button>
               <motion.a 
                 href="#cobertura" 
-                className="btn-outline-primary text-lg px-8 py-4"
+                className="btn-outline-primary text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -325,40 +325,40 @@ export function HeroSection() {
             transition={{ duration: 0.6, delay: 0.4 }}
           >
             <motion.div 
-              className="card-premium p-8"
+              className="card-premium p-5 sm:p-8"
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
-              <div className="text-center mb-6">
+              <div className="text-center mb-5 sm:mb-6">
                 <motion.div 
-                  className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4"
+                  className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3 sm:mb-4"
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.6, type: "spring", stiffness: 200 }}
                 >
-                  <MapPin className="w-8 h-8 text-primary" />
+                  <MapPin className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
                 </motion.div>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-2">
+                <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-1 sm:mb-2">
                   Consulte a cobertura
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-sm sm:text-base text-muted-foreground">
                   Digite seu CEP para verificar disponibilidade
                 </p>
               </div>
 
               {/* CEP Input */}
-              <div className="flex gap-3 mb-6">
+              <div className="flex gap-2 sm:gap-3 mb-5 sm:mb-6">
                 <input
                   type="text"
                   value={cep}
                   onChange={(e) => setCep(e.target.value.replace(/\D/g, "").slice(0, 8))}
                   placeholder="00000-000"
-                  className="input-premium flex-1 text-center text-xl tracking-widest"
+                  className="input-premium flex-1 text-center text-lg sm:text-xl tracking-widest min-w-0"
                   maxLength={9}
                 />
                 <motion.button
                   onClick={checkCoverage}
                   disabled={cep.length < 8 || isLoading}
-                  className="btn-primary px-6 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="btn-primary px-4 sm:px-6 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -519,7 +519,7 @@ export function HeroSection() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-16 lg:mt-24">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mt-12 sm:mt-16 lg:mt-24">
           {[
             { value: siteConfig.stats.customers, label: siteConfig.stats.customersText },
             { value: siteConfig.stats.installationTime, label: siteConfig.stats.installationText },
@@ -528,7 +528,7 @@ export function HeroSection() {
           ].map((stat, index) => (
             <motion.div
               key={index}
-              className="text-center p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-white/80"
+              className="text-center p-4 sm:p-6 rounded-2xl bg-white/50 backdrop-blur-sm border border-white/80"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
@@ -536,7 +536,7 @@ export function HeroSection() {
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
               <motion.div 
-                className="text-3xl lg:text-4xl font-display font-bold text-primary mb-1"
+                className="text-2xl sm:text-3xl lg:text-4xl font-display font-bold text-primary mb-1"
                 initial={{ scale: 0.8 }}
                 whileInView={{ scale: 1 }}
                 viewport={{ once: true }}
@@ -544,7 +544,7 @@ export function HeroSection() {
               >
                 {stat.value}
               </motion.div>
-              <div className="text-sm text-muted-foreground">{stat.label}</div>
+              <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
             </motion.div>
           ))}
         </div>

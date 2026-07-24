@@ -34,30 +34,30 @@ export function CoverageSection() {
   );
 
   return (
-    <section id="cobertura" className="py-16 lg:py-24 bg-accent">
+    <section id="cobertura" className="py-12 sm:py-16 lg:py-24 bg-accent">
       <div className="container">
         {/* Section Header */}
-        <div className="text-center mb-12 lg:mb-16">
-          <span className="badge-primary mb-4">Área de Cobertura</span>
-          <h2 className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <span className="badge-primary mb-3 sm:mb-4">Área de Cobertura</span>
+          <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4">
             Onde estamos presentes
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
             Fibra óptica de alta velocidade em Balneário Camboriú e Camboriú. 
             Confira se seu bairro já está coberto.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
           {/* Map placeholder / Visual */}
-          <div className="card-premium p-8 flex flex-col items-center justify-center min-h-[400px] bg-gradient-to-br from-primary/5 to-primary/10">
-            <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-              <MapPin className="w-12 h-12 text-primary" />
+          <div className="card-premium p-5 sm:p-8 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[400px] bg-gradient-to-br from-primary/5 to-primary/10">
+            <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-primary/10 flex items-center justify-center mb-4 sm:mb-6">
+              <MapPin className="w-8 h-8 sm:w-12 sm:h-12 text-primary" />
             </div>
-            <h3 className="font-display text-2xl font-bold text-foreground mb-2 text-center">
+            <h3 className="font-display text-xl sm:text-2xl font-bold text-foreground mb-2 text-center">
               {siteConfig.coverage.cities.join(" e ")}
             </h3>
-            <p className="text-muted-foreground text-center mb-6">
+            <p className="text-sm sm:text-base text-muted-foreground text-center mb-5 sm:mb-6">
               {neighborhoods.length}+ bairros atendidos com fibra óptica
             </p>
             <div className="flex flex-wrap justify-center gap-2">
@@ -78,9 +78,9 @@ export function CoverageSection() {
           </div>
 
           {/* Neighborhoods List */}
-          <div className="card-premium p-6">
-            <div className="mb-6">
-              <h4 className="font-display text-xl font-bold text-foreground mb-4">
+          <div className="card-premium p-5 sm:p-6">
+            <div className="mb-5 sm:mb-6">
+              <h4 className="font-display text-lg sm:text-xl font-bold text-foreground mb-3 sm:mb-4">
                 Bairros em {selectedCity}
               </h4>
               <div className="relative">
@@ -95,7 +95,7 @@ export function CoverageSection() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 max-h-[300px] overflow-auto pr-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[300px] overflow-auto pr-2">
               {filteredNeighborhoods.map((neighborhood) => (
                 <div
                   key={neighborhood}
