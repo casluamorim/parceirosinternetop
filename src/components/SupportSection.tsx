@@ -73,18 +73,18 @@ export function SupportSection() {
   ];
 
   return (
-    <section id="suporte" className="py-16 lg:py-24 bg-background">
+    <section id="suporte" className="py-12 sm:py-16 lg:py-24 bg-background">
       <div className="container">
         {/* Section Header */}
         <motion.div 
-          className="text-center mb-12 lg:mb-16"
+          className="text-center mb-8 sm:mb-12 lg:mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6 }}
         >
           <motion.span 
-            className="badge-primary mb-4 inline-block"
+            className="badge-primary mb-3 sm:mb-4 inline-block"
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
@@ -93,7 +93,7 @@ export function SupportSection() {
             Central de Ajuda
           </motion.span>
           <motion.h2 
-            className="font-display text-3xl lg:text-4xl font-bold text-foreground mb-4"
+            className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 sm:mb-4"
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -102,7 +102,7 @@ export function SupportSection() {
             Como podemos ajudar?
           </motion.h2>
           <motion.p 
-            className="text-lg text-muted-foreground max-w-2xl mx-auto"
+            className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -115,7 +115,7 @@ export function SupportSection() {
 
         {/* Support Options Grid */}
         <motion.div 
-          className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-16"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 mb-12 sm:mb-16"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"

@@ -15,8 +15,8 @@ export function Footer() {
   return (
     <footer className="bg-foreground text-white">
       {/* Main Footer */}
-      <div className="container py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+      <div className="container py-10 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="lg:col-span-1">
             <a href="#inicio" className="flex items-center gap-2 mb-4">
@@ -145,11 +145,11 @@ export function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="container py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-white/50">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs sm:text-sm text-white/50 text-center md:text-left">
             <p>
               © {new Date().getFullYear()} {siteConfig.company.name}. Todos os direitos reservados.
             </p>
-            <div className="flex items-center gap-6">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-6">
               <a href="/politica-de-privacidade" className="hover:text-white transition-colors">
                 Política de Privacidade
               </a>
