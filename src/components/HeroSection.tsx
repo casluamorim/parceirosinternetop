@@ -186,7 +186,7 @@ export function HeroSection() {
   return (
     <section
       id="inicio"
-      className="relative min-h-screen section-gradient pt-32 lg:pt-40 pb-16 overflow-hidden"
+      className="relative min-h-screen section-gradient pt-24 sm:pt-32 lg:pt-40 pb-12 sm:pb-16 overflow-hidden"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
