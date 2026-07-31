@@ -196,11 +196,24 @@ export function HeroSection() {
           animate={{ opacity: 0.3, x: 0 }}
           transition={{ duration: 1, delay: 0.3 }}
         >
-          <img 
-            src={heroFiberBg} 
-            alt="" 
-            className="w-full h-full object-cover object-left"
-          />
+          <picture>
+            <source
+              srcSet={heroFiberSm}
+              type="image/webp"
+              media="(max-width: 640px)"
+            />
+            <source srcSet={heroFiberWebp} type="image/webp" />
+            <img
+              src={heroFiberBg}
+              alt=""
+              aria-hidden="true"
+              decoding="async"
+              fetchPriority="low"
+              width={1920}
+              height={1080}
+              className="w-full h-full object-cover object-left"
+            />
+          </picture>
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/50" />
         <motion.div 
