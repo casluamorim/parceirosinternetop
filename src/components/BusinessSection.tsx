@@ -146,6 +146,8 @@ export function BusinessSection() {
                  <img
                    src={company.logo_url}
                    alt={company.name}
+                   loading="lazy"
+                   decoding="async"
                    className="h-10 md:h-12 w-auto object-contain"
                  />
                </div>

@@ -1,7 +1,27 @@
+import { useEffect, useRef, useState } from "react";
 import { Wifi, Phone, Mail, MapPin, Clock, Instagram, Facebook, MessageCircle } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 
 export function Footer() {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [showMap, setShowMap] = useState(false);
+
+  useEffect(() => {
+    const el = mapRef.current;
+    if (!el || showMap) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setShowMap(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [showMap]);
+
   const handleWhatsApp = () => {
     const message = encodeURIComponent(
       `Olá! Gostaria de falar com o atendimento da ${siteConfig.company.name}.`
@@ -111,18 +131,22 @@ export function Footer() {
             </div>
 
             {/* Google Maps */}
-            <div className="mt-4 rounded-xl overflow-hidden border border-white/10">
-              <iframe
-                src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(siteConfig.address.full)}`}
-                width="100%"
-                height="150"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Localização Parceiros Internet"
-                className="grayscale hover:grayscale-0 transition-all duration-300"
-              />
+            <div ref={mapRef} className="mt-4 rounded-xl overflow-hidden border border-white/10">
+              {showMap ? (
+                <iframe
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(siteConfig.address.full)}`}
+                  width="100%"
+                  height="150"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Localização Parceiros Internet"
+                  className="grayscale hover:grayscale-0 transition-all duration-300"
+                />
+              ) : (
+                <div className="h-[150px] w-full bg-white/5" aria-hidden="true" />
+              )}
             </div>
           </div>
 

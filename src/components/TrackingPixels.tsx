@@ -10,7 +10,7 @@ export function TrackingPixels() {
   useEffect(() => {
     let cancelled = false;
 
-    (async () => {
+    const load = async () => {
       const { data } = await supabase
         .from("site_settings")
         .select("key, value")
@@ -32,10 +32,26 @@ export function TrackingPixels() {
       if (map.tracking_ga_id) injectGA4(map.tracking_ga_id);
       if (map.tracking_gtm_id) injectGTM(map.tracking_gtm_id);
       if (map.tracking_tiktok_pixel_id) injectTikTok(map.tracking_tiktok_pixel_id);
-    })();
+    };
+
+    // Defer marketing scripts until the browser is idle (or after first paint)
+    // so they never compete with the initial render on mobile.
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+    let idleId: number | undefined;
+    let timeoutId: number | undefined;
+    if (typeof w.requestIdleCallback === "function") {
+      idleId = w.requestIdleCallback(() => void load(), { timeout: 4000 });
+    } else {
+      timeoutId = window.setTimeout(() => void load(), 2500);
+    }
 
     return () => {
       cancelled = true;
+      if (idleId !== undefined) w.cancelIdleCallback?.(idleId);
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
     };
   }, []);
 
