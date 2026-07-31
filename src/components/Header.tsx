@@ -143,7 +143,7 @@ export function Header() {
             {/* Logo */}
             <a href="#inicio" className="flex items-center gap-2 min-w-0">
               {logoUrl ? (
-                <img src={logoUrl} alt={siteConfig.company.name} className="h-11 sm:h-16 lg:h-20 xl:h-24 w-auto object-contain" />
+                <img src={logoUrl} alt={siteConfig.company.name} decoding="async" fetchPriority="high" className="h-11 sm:h-16 lg:h-20 xl:h-24 w-auto object-contain" />
               ) : (
                 <>
                   <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center flex-shrink-0">
