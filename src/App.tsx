@@ -33,27 +33,29 @@ const App = () => (
       <TrackingPixels />
 
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Admin />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/preview" element={<Preview />} />
-          <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
-          <Route path="/termos-de-uso" element={<TermosUso />} />
-          <Route path="/sales" element={<SalesLayout />}>
-            <Route index element={<SalesDashboard />} />
-            <Route path="vendas" element={<VendasPage />} />
-            <Route path="clientes" element={<ClientesPage />} />
-            <Route path="cancelamentos" element={<CancelamentosPage />} />
-            <Route path="metas" element={<MetasPage />} />
-            <Route path="ranking" element={<RankingPage />} />
-            <Route path="vendedores" element={<VendedoresPage />} />
-            <Route path="usuarios" element={<UsuariosPage />} />
-            <Route path="despesas" element={<DespesasPage />} />
-            <Route path="config" element={<ConfigPage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Admin />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/preview" element={<Preview />} />
+            <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
+            <Route path="/termos-de-uso" element={<TermosUso />} />
+            <Route path="/sales" element={<SalesLayout />}>
+              <Route index element={<SalesDashboard />} />
+              <Route path="vendas" element={<VendasPage />} />
+              <Route path="clientes" element={<ClientesPage />} />
+              <Route path="cancelamentos" element={<CancelamentosPage />} />
+              <Route path="metas" element={<MetasPage />} />
+              <Route path="ranking" element={<RankingPage />} />
+              <Route path="vendedores" element={<VendedoresPage />} />
+              <Route path="usuarios" element={<UsuariosPage />} />
+              <Route path="despesas" element={<DespesasPage />} />
+              <Route path="config" element={<ConfigPage />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
 
     </TooltipProvider>
