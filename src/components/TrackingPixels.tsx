@@ -10,7 +10,7 @@ export function TrackingPixels() {
   useEffect(() => {
     let cancelled = false;
 
-    (async () => {
+    const load = async () => {
       const { data } = await supabase
         .from("site_settings")
         .select("key, value")
