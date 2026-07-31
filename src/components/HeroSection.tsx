@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { siteConfig } from "@/lib/config";
 import { supabase } from "@/integrations/supabase/client";
 import heroFiberBg from "@/assets/hero-fiber.jpg";
+import heroFiberWebp from "@/assets/hero-fiber.webp";
+import heroFiberSm from "@/assets/hero-fiber-sm.webp";
 
 interface FeaturedPlan {
   speed: number;
