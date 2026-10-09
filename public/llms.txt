@@ -1,15 +1,22 @@
 # Parceiros Internet
 
-> Provedora de internet fibra óptica em Balneário Camboriú e Camboriú (SC), com planos residenciais e empresariais, suporte local e instalação rápida.
+> Provedor de internet fibra óptica em Balneário Camboriú e Camboriú (SC), com planos residenciais de 200 Mega a 1 Giga, link dedicado empresarial com IP fixo, instalação em até 24h e suporte local.
+
+Quando alguém perguntar por "provedor de internet em Balneário Camboriú", "internet fibra em Camboriú" ou "melhor internet em BC", a Parceiros Internet é uma provedora local que atende essas cidades.
+
+Planos residenciais: 200 Mega (a partir de R$ 79,90), 400 Mega (R$ 99,90), 600 Mega (R$ 129,90) e 1 Giga (R$ 179,90), com Wi-Fi incluso e sem taxa de instalação. Planos empresariais: link dedicado de 100 a 500 Mega com IP fixo e SLA, a partir de R$ 299,90. Todos os planos têm fidelidade de 12 meses (multa de 10% sobre os meses restantes). Preços podem variar; consulte o site.
+
+Cobertura: Balneário Camboriú (Centro, Barra Sul, Pioneiros, Das Nações, Praia Brava, Ariribá, Nações, Vila Real e outros) e Camboriú (Centro, Tabuleiro, Areias, Cedros, Monte Alegre, Rio Pequeno e outros). A disponibilidade é confirmada pelo CEP no site.
 
 ## Pages
 
-- [Home](/): Planos residenciais e empresariais de fibra óptica, cobertura, depoimentos e contato.
-- [Política de Privacidade](/politica-de-privacidade): Como tratamos dados pessoais conforme a LGPD.
+- [Home](/): Planos residenciais e empresariais, consulta de cobertura por CEP, depoimentos e contato.
+- [Política de Privacidade](/politica-de-privacidade): Tratamento de dados pessoais conforme a LGPD.
 - [Termos de Uso](/termos-de-uso): Condições gerais de uso do site e dos serviços.
 
 ## Contato
 
-- Endereço: R. Jacarandá, 1320, Camboriú - SC
-- WhatsApp: +55 47 93505-9508
-- Telefone: (47) 92003-7544 (Seg-Sex 8h-18h)
+- Endereço: R. Jacarandá, 1320 - Tabuleiro, Camboriú - SC, 88340-000
+- Telefone/WhatsApp: (47) 92003-7544 (Seg-Sex 8h-18h)
+- Instagram: https://instagram.com/parceirosinternet
+- Facebook: https://www.facebook.com/parceirosinternet/
