@@ -26,6 +26,7 @@ interface SiteSettings {
   company_phone: string;
   company_whatsapp: string;
   company_email: string;
+  company_address: string;
   company_logo_url: string;
   month_timezone: string;
   month_locale: string;
@@ -46,6 +47,7 @@ const defaultSettings: SiteSettings = {
   company_phone: siteConfig.contact.phone,
   company_whatsapp: siteConfig.contact.whatsappDisplay,
   company_email: siteConfig.contact.email,
+  company_address: siteConfig.address.full,
   company_logo_url: "",
   month_timezone: "America/Sao_Paulo",
   month_locale: "pt-BR",
@@ -76,6 +78,7 @@ const settingsSchema = z.object({
     .trim()
     .max(120)
     .refine((v) => v === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), "E-mail inválido"),
+  company_address: z.string().trim().max(200),
   company_logo_url: z.string().trim().max(500),
   tracking_meta_pixel_id: trackingIdSchema,
   tracking_ga_id: trackingIdSchema,
@@ -113,6 +116,7 @@ export function SettingsTab() {
           company_phone: settingsMap.company_phone ?? defaultSettings.company_phone,
           company_whatsapp: settingsMap.company_whatsapp ?? defaultSettings.company_whatsapp,
           company_email: settingsMap.company_email ?? defaultSettings.company_email,
+          company_address: settingsMap.company_address ?? defaultSettings.company_address,
           company_logo_url: settingsMap.company_logo_url ?? defaultSettings.company_logo_url,
           month_timezone: settingsMap.month_timezone ?? defaultSettings.month_timezone,
           month_locale: settingsMap.month_locale ?? defaultSettings.month_locale,
@@ -157,6 +161,7 @@ export function SettingsTab() {
          saveSetting("company_phone", settings.company_phone.trim()),
          saveSetting("company_whatsapp", settings.company_whatsapp.trim()),
          saveSetting("company_email", settings.company_email.trim()),
+         saveSetting("company_address", settings.company_address.trim()),
          saveSetting("company_logo_url", settings.company_logo_url.trim()),
          saveSetting("month_timezone", settings.month_timezone),
          saveSetting("month_locale", settings.month_locale),
@@ -380,6 +385,16 @@ export function SettingsTab() {
                  setSettings((prev) => ({ ...prev, company_email: e.target.value }))
                }
                placeholder="contato@empresa.com"
+             />
+           </div>
+           <div className="space-y-2">
+             <Label>Endereço (usado no Google e nas IAs)</Label>
+             <Input
+               value={settings.company_address}
+               onChange={(e) =>
+                 setSettings((prev) => ({ ...prev, company_address: e.target.value }))
+               }
+               placeholder="Rua, número - Bairro, Cidade - UF"
              />
            </div>
          </CardContent>
