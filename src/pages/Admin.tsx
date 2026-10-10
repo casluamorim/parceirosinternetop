@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import { SiteEditorTab } from "@/components/admin/SiteEditorTab";
 import { ArrowLeft, AlertCircle, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +18,7 @@ import { PlansCombosTab } from "@/components/admin/PlansCombosTab";
  import { IntegracoesTab } from "@/components/admin/IntegracoesTab";
 
 export default function Admin() {
+  const [activeTab, setActiveTab] = useState("plans-combos");
   const { user, isAdmin, loading, signOut } = useAuth();
 
   if (loading) {
@@ -95,9 +98,10 @@ export default function Admin() {
 
       {/* Main Content */}
       <main className="container py-8">
-        <Tabs defaultValue="plans-combos" className="space-y-6">
+         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <div className="w-full overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-max sm:w-full sm:grid sm:grid-cols-2 lg:grid-cols-7 gap-1">
+             <TabsList className="inline-flex w-max sm:w-full sm:grid sm:grid-cols-2 lg:grid-cols-8 gap-1 h-auto">
+               <TabsTrigger value="editor" className="whitespace-nowrap">Editor do Site</TabsTrigger>
               <TabsTrigger value="plans-combos" className="whitespace-nowrap">Planos e Combos</TabsTrigger>
               <TabsTrigger value="companies" className="whitespace-nowrap">Empresas</TabsTrigger>
               <TabsTrigger value="coverage" className="whitespace-nowrap">Cobertura</TabsTrigger>
@@ -109,6 +113,7 @@ export default function Admin() {
           </div>
 
           {/* Plans & Combos Tab */}
+          <TabsContent value="editor"><SiteEditorTab onManage={setActiveTab} /></TabsContent>
           <TabsContent value="plans-combos">
             <PlansCombosTab />
           </TabsContent>

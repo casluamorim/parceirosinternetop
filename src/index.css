@@ -342,3 +342,12 @@
   @apply bg-muted-foreground/30;
 }
 
+.site-editor-enabled [data-site-field],
+.site-editor-enabled [data-site-manage] { cursor: crosshair; }
+.site-editor-enabled [data-site-field]:hover,
+.site-editor-enabled [data-site-manage]:hover,
+.site-editor-enabled .site-editor-selected {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 3px;
+}
+

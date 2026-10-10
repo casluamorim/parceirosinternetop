@@ -11,10 +11,11 @@ import { SupportSection } from "@/components/SupportSection";
 import { ReferralSection } from "@/components/ReferralSection";
 import { FloatingChat } from "@/components/FloatingChat";
 import { PrivacyConsentBanner } from "@/components/PrivacyConsentBanner";
+import { SiteContentProvider } from "@/components/SiteContent";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+     <SiteContentProvider><div className="min-h-screen bg-background">
       <Header />
       <main>
         <HeroSection />
@@ -29,7 +30,7 @@ const Index = () => {
       <Footer />
       <FloatingChat />
       <PrivacyConsentBanner />
-    </div>
+     </div></SiteContentProvider>
   );
 };
 

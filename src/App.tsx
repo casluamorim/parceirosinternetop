@@ -22,6 +22,7 @@ const Preview = lazy(() => import("./pages/Preview"));
 const PoliticaPrivacidade = lazy(() => import("./pages/PoliticaPrivacidade"));
 const TermosUso = lazy(() => import("./pages/TermosUso"));
 import { TrackingPixels } from "./components/TrackingPixels";
+import { SiteFavicon } from "./components/SiteFavicon";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <TrackingPixels />
+      <SiteFavicon />
 
       <BrowserRouter>
         <Suspense fallback={null}>

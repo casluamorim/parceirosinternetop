@@ -17,6 +17,7 @@ import {
 } from "@/lib/month-format";
 
 import { z } from "zod";
+import { FaviconSettings } from "./FaviconSettings";
 
 interface SiteSettings {
   promo_active: boolean;
@@ -285,6 +286,7 @@ export function SettingsTab() {
       </Card>
 
 
+       <FaviconSettings />
        {/* Promo Settings */}
        <Card>
          <CardHeader className="flex flex-row items-center justify-between">
