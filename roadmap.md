@@ -1,0 +1,4 @@
+- [ ] Add admin click-to-edit site preview with persistent text/image edits.
+- [ ] Add favicon upload and browser icon updates.
+- [ ] Add linked Agência Racun footer credit.
+- [ ] Verify authenticated editor, upload and public rendering.
